@@ -1,0 +1,37 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Env secrets
+.env
+
+# Model weights (large files)
+models/
+*.safetensors
+*.ckpt
+*.pt
+*.bin
+
+# Ruff cache
+.ruff_cache/
+
+# VS Code - ignore user-specific files, keep shared settings
+.vscode/
+# !.vscode/settings.json
+# !.vscode/extensions.json
+# !.vscode/launch.json
+
+# Keep outputs folder but ignore generated files inside
+outputs/*
+!outputs/.gitkeep
+
+# Keep empty scaffold folders
+!prompts/.gitkeep
+!workflows/.gitkeep

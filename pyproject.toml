@@ -1,0 +1,67 @@
+[project]
+name = "idol-generate"
+version = "0.1.0"
+description = "AI Idol content generation system – Stable Diffusion + ComfyUI"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "accelerate>=1.13.0",
+    "diffusers>=0.37.1",
+    "hatchling>=1.29.0",
+    "omegaconf>=2.3.0",
+    "pillow>=12.1.1",
+    "python-dotenv>=1.2.2",
+    "rich>=14.3.3",
+    "safetensors>=0.7.0",
+    "torch>=2.11.0",
+    "torchvision>=0.26.0",
+    "transformers>=5.5.3",
+]
+
+[project.scripts]
+idol-generate = "idol_generate.__main__:main"
+
+[tool.uv]
+package = true
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = [
+    "ruff>=0.15.10",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/idol_generate"]
+
+# ── Ruff ──────────────────────────────────────────────────────────────────────
+[tool.ruff]
+src = ["src"]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "UP",  # pyupgrade
+    "C4",  # flake8-comprehensions
+    "SIM", # flake8-simplify
+    "RUF", # ruff-specific rules
+]
+ignore = [
+    "E501", # line too long – handled by formatter
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["idol_generate"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+docstring-code-format = true
