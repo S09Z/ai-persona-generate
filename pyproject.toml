@@ -24,6 +24,9 @@ idol-generate = "idol_generate.__main__:main"
 [tool.uv]
 package = true
 
+[tool.uv.workspace]
+members = ["vendor/ComfyUI"]
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
@@ -55,8 +58,13 @@ select = [
     "RUF", # ruff-specific rules
 ]
 ignore = [
-    "E501", # line too long – handled by formatter
+    "E501", # line too long - handled by formatter
 ]
+
+[tool.ruff.lint.per-file-ignores]
+# sys.path manipulation must precede local imports in standalone scripts
+"generate.py" = ["E402"]
+"first_image.py" = ["E402"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["idol_generate"]

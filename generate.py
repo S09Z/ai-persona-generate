@@ -1,5 +1,5 @@
 """
-generate.py  –  AI Idol content generation CLI
+generate.py - AI Idol content generation CLI
 Usage:
     uv run generate.py --character luna --type selfie
     uv run generate.py --character luna --type fashion --no-image
@@ -20,14 +20,18 @@ from rich.panel import Panel
 from rich.pretty import Pretty
 
 load_dotenv()
+
+# Suppress macOS HF Hub symlink warning
+os.environ.setdefault("HF_HUB_DISABLE_SYMLINKS_WARNING", "1")
+
 console = Console()
 
 # ── resolve project root ──────────────────────────────────────────────────────
 ROOT = Path(__file__).parent
 sys.path.insert(0, str(ROOT / "src"))
 
-from idol_generate.character import Character  # noqa: E402
-from idol_generate.prompt_builder import build_post  # noqa: E402
+from idol_generate.character import Character
+from idol_generate.prompt_builder import build_post
 
 # ── config from .env ──────────────────────────────────────────────────────────
 MODEL_ID = os.getenv("MODEL_ID", "stabilityai/stable-diffusion-xl-base-1.0")
@@ -47,15 +51,25 @@ def generate_image(post: dict, output_path: Path) -> None:
     import torch
     from diffusers import DPMSolverMultistepScheduler, StableDiffusionXLPipeline
 
+    # Authenticate with HuggingFace Hub if token is set
+    hf_token = os.getenv("HF_TOKEN")
+    if hf_token and not hf_token.startswith("hf_your"):
+        from huggingface_hub import login
+
+        login(token=hf_token, add_to_git_credential=False)
+
     console.log(f"[bold cyan]Loading model:[/] {MODEL_PATH or MODEL_ID} on [yellow]{DEVICE}[/]")
 
-    dtype = torch.float16 if DEVICE in ("cuda", "mps") else torch.float32
+    # float16 causes black/NaN output on MPS — must use float32
+    dtype = torch.float32 if DEVICE == "mps" else torch.float16
 
     if MODEL_PATH and Path(MODEL_PATH).exists():
+        console.log("[dim]Loading from local file...[/]")
         pipe = StableDiffusionXLPipeline.from_single_file(
             MODEL_PATH, torch_dtype=dtype, use_safetensors=True
         )
     else:
+        console.log("[dim]Downloading from HuggingFace Hub...[/]")
         pipe = StableDiffusionXLPipeline.from_pretrained(
             MODEL_ID, torch_dtype=dtype, use_safetensors=True
         )
@@ -65,10 +79,12 @@ def generate_image(post: dict, output_path: Path) -> None:
     )
     pipe = pipe.to(DEVICE)
 
-    if DEVICE == "cuda":
+    if DEVICE == "mps":
+        pipe.enable_attention_slicing()
+    elif DEVICE == "cuda":
         pipe.enable_xformers_memory_efficient_attention()
 
-    console.log("[bold cyan]Generating image…[/]")
+    console.log(f"[bold cyan]Generating image[/] {WIDTH}x{HEIGHT} in {STEPS} steps...")
     result = pipe(
         prompt=post["prompt"],
         negative_prompt=post["negative_prompt"],
@@ -83,7 +99,49 @@ def generate_image(post: dict, output_path: Path) -> None:
     console.log(f"[green]Image saved →[/] {output_path}")
 
 
-# ── main ──────────────────────────────────────────────────────────────────────
+# ── ComfyUI image generation ──────────────────────────────────────────────────────────
+def generate_image_comfyui(
+    post: dict,
+    output_path: Path,
+    workflow_path: str = "./workflows/luna_portrait.json",
+    seed: int | None = None,
+) -> None:
+    """Submit a workflow to ComfyUI API and download the result."""
+    from idol_generate.comfyui_client import (
+        download_image,
+        is_running,
+        queue_workflow,
+        wait_for_result,
+    )
+
+    if not is_running():
+        console.print("[red]ComfyUI is not running![/] Start it with: [bold]./comfyui.sh[/]")
+        raise SystemExit(1)
+
+    console.log("[bold cyan]Submitting workflow to ComfyUI...[/]")
+    prompt_id = queue_workflow(
+        workflow_path=workflow_path,
+        positive_prompt=post["prompt"],
+        negative_prompt=post["negative_prompt"],
+        seed=seed,
+        steps=STEPS,
+        cfg=GUIDANCE,
+        width=WIDTH,
+        height=HEIGHT,
+    )
+    console.log(f"[dim]Prompt ID: {prompt_id}[/] — waiting for result...")
+
+    images = wait_for_result(prompt_id)
+    if not images:
+        console.print("[red]No images returned from ComfyUI[/]")
+        return
+
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    result_path = download_image(str(images[0]), output_path)
+    console.log(f"[green]Image saved →[/] {result_path}")
+
+
+# ── main ──────────────────────────────────────────────────────────────────
 def main() -> None:
     parser = argparse.ArgumentParser(description="AI Idol post generator")
     parser.add_argument(
@@ -101,6 +159,16 @@ def main() -> None:
         "--no-image", action="store_true", help="Skip image generation (prompt-only mode)"
     )
     parser.add_argument("--seed", type=int, default=None, help="Random seed for reproducibility")
+    parser.add_argument(
+        "--comfyui",
+        action="store_true",
+        help="Use ComfyUI API instead of diffusers (requires ./comfyui.sh running)",
+    )
+    parser.add_argument(
+        "--workflow",
+        default="./workflows/luna_portrait.json",
+        help="Path to ComfyUI workflow JSON (used with --comfyui)",
+    )
     args = parser.parse_args()
 
     if args.seed is not None:
@@ -136,7 +204,10 @@ def main() -> None:
     # Generate image (unless skipped)
     if not args.no_image:
         img_path = OUTPUT_DIR / f"{character.name.lower()}_{args.content_type}_{ts}.png"
-        generate_image(post, img_path)
+        if args.comfyui:
+            generate_image_comfyui(post, img_path, args.workflow, args.seed)
+        else:
+            generate_image(post, img_path)
     else:
         console.print("[yellow]Image generation skipped (--no-image)[/]")
 

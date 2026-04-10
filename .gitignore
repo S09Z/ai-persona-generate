@@ -22,6 +22,9 @@ models/
 # Ruff cache
 .ruff_cache/
 
+# Vendored subprojects (cloned separately, not committed)
+vendor/
+
 # VS Code - ignore user-specific files, keep shared settings
 .vscode/
 # !.vscode/settings.json
