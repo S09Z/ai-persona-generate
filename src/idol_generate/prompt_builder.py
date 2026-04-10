@@ -29,8 +29,8 @@ CONTENT_CONFIGS: dict[str, dict] = {
         "mood_tags": ["calm", "dreamy", "introspective", "warm"],
         "caption_hooks": [
             "some days the light just hits different... {hook}",
-            "mornings like this make everything feel possible ☁️ {hook}",
-            "caught between doing everything and doing nothing 🌿 {hook}",
+            "mornings like this make everything feel possible {hook}",
+            "caught between doing everything and doing nothing {hook}",
         ],
     },
     "fashion": {
@@ -48,9 +48,9 @@ CONTENT_CONFIGS: dict[str, dict] = {
         ],
         "mood_tags": ["editorial", "confident", "chic", "effortless"],
         "caption_hooks": [
-            "outfit does the talking today 🤫 {hook}",
-            "dressed for the version of myself I'm becoming ✨ {hook}",
-            "if the fit is right, nothing else matters 🖤 {hook}",
+            "outfit does the talking today {hook}",
+            "dressed for the version of myself I'm becoming {hook}",
+            "if the fit is right, nothing else matters {hook}",
         ],
     },
     "selfie": {
@@ -68,9 +68,9 @@ CONTENT_CONFIGS: dict[str, dict] = {
         ],
         "mood_tags": ["candid", "intimate", "playful", "warm"],
         "caption_hooks": [
-            "hi 👋 missed you {hook}",
-            "not edited, just me today 🌸 {hook}",
-            "felt cute, might delete later... probably won't 😚 {hook}",
+            "hi, missed you {hook}",
+            "not edited, just me today {hook}",
+            "felt cute, might delete later... probably won't {hook}",
         ],
     },
     "story": {
@@ -88,8 +88,8 @@ CONTENT_CONFIGS: dict[str, dict] = {
         ],
         "mood_tags": ["mysterious", "melancholic", "nostalgic", "cinematic"],
         "caption_hooks": [
-            "some things are better left unfinished... 🌙 {hook}",
-            "she remembered everything they said she'd forget 🕯️ {hook}",
+            "some things are better left unfinished... {hook}",
+            "she remembered everything they said she'd forget {hook}",
             "the city felt smaller that night {hook}",
         ],
     },
@@ -101,18 +101,42 @@ ENGAGEMENT_HOOKS = [
     "tag someone who gets it",
     "how are you spending today?",
     "what's your slow morning ritual?",
-    "",
 ]
 
+# Full SDXL-tuned negative prompt for RealVisXL portrait work
 NEGATIVE_PROMPT = (
-    "deformed, blurry, bad anatomy, extra limbs, cloned face, disfigured, "
-    "low quality, lowres, text, watermark, signature, out of frame, ugly, "
-    "overexposed, grainy, unrealistic skin"
+    "(worst quality, low quality:1.4), (bad anatomy:1.3), "
+    "(deformed, distorted, disfigured:1.3), "
+    "bad hands, bad fingers, missing fingers, extra fingers, fused fingers, "
+    "too many fingers, mutated hands, poorly drawn hands, "
+    "long neck, mutation, deformed iris, deformed pupils, "
+    "cartoon, painting, illustration, anime, 3d render, cgi, fake, plastic, "
+    "blurry, out of focus, overexposed, underexposed, "
+    "text, watermark, signature, username, logo, frame, border, "
+    "ugly, duplicate, morbid, cloned face, extra limbs, "
+    "nsfw, nude, explicit"
 )
 
+# CLIP-L prompt_1: scene/subject description — keep lean to fit 77 tokens
+# CLIP-G prompt_2: quality/booster tags — SDXL's bigger encoder handles these
+QUALITY_TAGS_CLIP_G = (
+    "masterpiece, best quality, 8k uhd, ultra-detailed, "
+    "RAW photo, professional photograph, award-winning photography, "
+    "DSLR, photorealistic, photon mapping, volumetric lighting, "
+    "sharp focus, intricate details"
+)
 
-def build_image_prompt(character: Character, content_type: ContentType) -> tuple[str, str]:
-    """Returns (positive_prompt, negative_prompt)."""
+# Content-type to clean hashtag mapping
+_CONTENT_TAG_MAP: dict[str, str] = {
+    "daily_life": "DailyLife",
+    "fashion": "Fashion",
+    "selfie": "Selfie",
+    "story": "Story",
+}
+
+
+def build_image_prompt(character: Character, content_type: ContentType) -> tuple[str, str, str]:
+    """Returns (prompt, prompt_2, negative_prompt) — SDXL dual-CLIP split."""
     cfg = CONTENT_CONFIGS[content_type]
     a = character.appearance
     v = character.visual_style
@@ -122,21 +146,30 @@ def build_image_prompt(character: Character, content_type: ContentType) -> tuple
     mood = random.choice(cfg["mood_tags"])
     palette = ", ".join(v.color_palette[:2])
 
-    positive = (
-        f"{character.name}, {a.face}, {a.hair}, {a.signature_features}, "
-        f"{a.body_type} figure, {pose}, {env}, "
-        f"{v.lighting}, {v.texture}, {palette} tones, "
-        f"{mood} mood, {character.style}, "
-        f"high detail, photorealistic, sharp focus"
+    # LoRA trigger word prefix (empty if no LoRA configured)
+    trigger = f"{character.lora.trigger_word}, " if character.lora.trigger_word else ""
+
+    # CLIP-L (prompt): subject + scene — kept lean to stay under 77 tokens
+    prompt_1 = (
+        f"{trigger}"
+        f"{a.face}, {a.eye_color}, {a.hair}, {a.signature_features}, "
+        f"{a.body_type} figure, {pose}, "
+        f"{env}, {v.lighting}, "
+        f"{v.camera_settings}, "
+        f"{palette} color palette, {mood} mood"
     )
-    return positive, NEGATIVE_PROMPT
+    # CLIP-G (prompt_2): quality/booster tags — SDXL's 2nd encoder handles long tags well
+    prompt_2 = f"{QUALITY_TAGS_CLIP_G}, {character.style}"
+
+    return prompt_1, prompt_2, NEGATIVE_PROMPT
 
 
 def build_caption(character: Character, content_type: ContentType) -> str:
     cfg = CONTENT_CONFIGS[content_type]
     template = random.choice(cfg["caption_hooks"])
     hook = random.choice(ENGAGEMENT_HOOKS)
-    return template.format(hook=hook).strip()
+    emoji = random.choice(character.emoji_pool)
+    return f"{template.format(hook=hook)} {emoji}".strip()
 
 
 def build_tags(character: Character, content_type: ContentType) -> list[str]:
@@ -145,20 +178,29 @@ def build_tags(character: Character, content_type: ContentType) -> list[str]:
         character.name,
         "AIIdol",
         "VirtualIdol",
-        content_type.replace("_", ""),
+        _CONTENT_TAG_MAP.get(content_type, content_type),
     ]
-    mood_tags = [t.replace(" ", "") for t in cfg["mood_tags"][:2]]
-    style_tags = [t.replace(" ", "") for t in character.visual_style.mood_keywords[:2]]
-    return base + mood_tags + style_tags
+    mood_tags = [t.title().replace(" ", "") for t in cfg["mood_tags"][:2]]
+    style_tags = [t.title().replace(" ", "") for t in character.visual_style.mood_keywords[:2]]
+    # Deduplicate while preserving insertion order
+    seen: set[str] = set()
+    result: list[str] = []
+    for tag in base + mood_tags + style_tags:
+        if tag not in seen:
+            seen.add(tag)
+            result.append(tag)
+    return result
 
 
 def build_post(character: Character, content_type: ContentType) -> dict:
-    positive_prompt, negative_prompt = build_image_prompt(character, content_type)
+    prompt, prompt_2, negative_prompt = build_image_prompt(character, content_type)
     caption = build_caption(character, content_type)
     tags = build_tags(character, content_type)
+    # Single draw for mood so prompt and metadata stay consistent
     mood = random.choice(CONTENT_CONFIGS[content_type]["mood_tags"])
     return {
-        "prompt": positive_prompt,
+        "prompt": prompt,
+        "prompt_2": prompt_2,
         "negative_prompt": negative_prompt,
         "caption": caption,
         "tags": tags,
