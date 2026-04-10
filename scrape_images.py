@@ -434,23 +434,32 @@ def cmd_instagram(args: argparse.Namespace) -> None:
         extract_cookies(Path(args.cookie_file))
         return
 
-    if not args.target:
-        console.print("[red]--target is required[/]")
+    if not args.target and not getattr(args, "url", []):
+        console.print("[red]Provide --target <username> or --url <post_url> ...[/]")
         return
 
-    out_dir = Path(args.out) if args.out else Path("datasets") / "instagram" / args.target
+    direct_urls: list[str] = getattr(args, "url", [])
+    label = args.target or "direct"
+    out_dir = Path(args.out) if args.out else Path("datasets") / "instagram" / label
     out_dir.mkdir(parents=True, exist_ok=True)
 
     limit = args.posts
     offset = args.offset
     save_fmt = args.format  # "jpg" | "png" | "webp"
-    profile_url = f"https://www.instagram.com/{args.target}/"
-
-    console.rule(f"[bold magenta]Instagram → {args.target}[/]")
-    page_num = offset // limit + 1 if limit else 1
-    console.print(
-        f"  posts={limit or 'all'}  offset={offset}  page≈{page_num}  fmt={save_fmt}  output → [cyan]{out_dir}[/]\n"
+    profile_url = (
+        f"https://www.instagram.com/{args.target}/" if args.target else "https://www.instagram.com/"
     )
+
+    console.rule(f"[bold magenta]Instagram → {label}[/]")
+    if direct_urls:
+        console.print(
+            f"  mode=direct-url  urls={len(direct_urls)}  fmt={save_fmt}  output → [cyan]{out_dir}[/]\n"
+        )
+    else:
+        page_num = offset // limit + 1 if limit else 1
+        console.print(
+            f"  posts={limit or 'all'}  offset={offset}  page≈{page_num}  fmt={save_fmt}  output → [cyan]{out_dir}[/]\n"
+        )
 
     IG_CDN = ("cdninstagram.com", "fbcdn.net")
     # Only skip known avatar/tiny thumbnail size suffixes — e35 is full-res, do NOT skip it
@@ -682,39 +691,44 @@ def cmd_instagram(args: argparse.Namespace) -> None:
             return
 
         # ── Phase 1: scroll profile grid and collect post / reel links ───────
-        console.log("[cyan]Phase 1: scrolling grid to collect post links...[/]")
-        collected_links: list[str] = []
-        seen_links: set[str] = set()
-        stall = 0
-        want = (offset + limit) if limit else 9999
+        if direct_urls:
+            # Direct URL mode: skip profile grid entirely
+            target_links = direct_urls
+            console.log(f"[cyan]Direct URL mode[/] — {len(target_links)} post(s) supplied")
+        else:
+            console.log("[cyan]Phase 1: scrolling grid to collect post links...[/]")
+            collected_links: list[str] = []
+            seen_links: set[str] = set()
+            stall = 0
+            want = (offset + limit) if limit else 9999
 
-        while len(collected_links) < want:
-            hrefs: list[str] = page.evaluate("""
-                () => Array.from(
-                    document.querySelectorAll('a[href*="/p/"], a[href*="/reel/"]')
-                ).map(a => a.href)
-            """)
-            before = len(collected_links)
-            for href in hrefs:
-                clean = href.split("?")[0].rstrip("/")
-                if clean not in seen_links:
-                    seen_links.add(clean)
-                    collected_links.append(clean)
+            while len(collected_links) < want:
+                hrefs: list[str] = page.evaluate("""
+                    () => Array.from(
+                        document.querySelectorAll('a[href*="/p/"], a[href*="/reel/"]')
+                    ).map(a => a.href)
+                """)
+                before = len(collected_links)
+                for href in hrefs:
+                    clean = href.split("?")[0].rstrip("/")
+                    if clean not in seen_links:
+                        seen_links.add(clean)
+                        collected_links.append(clean)
 
-            stall = 0 if len(collected_links) > before else stall + 1
-            if stall >= 10:
-                break
+                stall = 0 if len(collected_links) > before else stall + 1
+                if stall >= 10:
+                    break
 
-            page.evaluate("window.scrollBy(0, window.innerHeight * 3)")
-            page.wait_for_timeout(int(args.delay * 1000) + 1200)
+                page.evaluate("window.scrollBy(0, window.innerHeight * 3)")
+                page.wait_for_timeout(int(args.delay * 1000) + 1200)
 
-        # Apply offset + limit window
-        end = (offset + limit) if limit else len(collected_links)
-        target_links = collected_links[offset:end]
-        console.log(
-            f"[green]Found {len(collected_links)} total links[/], "
-            f"using [{offset}:{end}] → [bold]{len(target_links)}[/] posts"
-        )
+            # Apply offset + limit window
+            end = (offset + limit) if limit else len(collected_links)
+            target_links = collected_links[offset:end]
+            console.log(
+                f"[green]Found {len(collected_links)} total links[/], "
+                f"using [{offset}:{end}] → [bold]{len(target_links)}[/] posts"
+            )
 
         # ── Phase 2: open each post so the full-res CDN URL fires on_response ─
         # Enable byte capture now (disabled during Phase 1 to skip thumbnails)
@@ -724,10 +738,11 @@ def cmd_instagram(args: argparse.Namespace) -> None:
             TextColumn("[bold cyan]Opening posts[/]"),
             BarColumn(),
             TaskProgressColumn(),
-            TextColumn(f"[dim]/{len(target_links)}[/]"),
+            TextColumn("[dim]{task.completed}/" + str(len(target_links)) + " posts[/]"),
+            TextColumn("  [green]{task.fields[imgs]} imgs saved[/]"),
             console=console,
         ) as progress:
-            task = progress.add_task("posts", total=len(target_links))
+            task = progress.add_task("posts", total=len(target_links), imgs=0)
             for post_url in target_links:
                 try:
                     page.goto(post_url, wait_until="domcontentloaded", timeout=15_000)
@@ -751,6 +766,7 @@ def cmd_instagram(args: argparse.Namespace) -> None:
                 except Exception:
                     pass
                 progress.advance(task)
+                progress.update(task, imgs=len(saved_files))
                 time.sleep(args.delay * 0.3)  # polite throttle
 
         browser.close()
@@ -775,6 +791,13 @@ def main() -> None:
     # ── instagram sub-command ─────────────────────────────────────────────────
     ig = sub.add_parser("instagram", aliases=["ig"], help="Download via Playwright browser")
     ig.add_argument("--target", default="", help="Username to scrape")
+    ig.add_argument(
+        "--url",
+        nargs="+",
+        default=[],
+        metavar="URL",
+        help="One or more direct post/reel URLs to download (skips profile grid)",
+    )
     ig.add_argument("--posts", type=int, default=30, help="Number of posts per run (default: 30)")
     ig.add_argument(
         "--offset",
