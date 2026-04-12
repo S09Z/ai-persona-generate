@@ -38,3 +38,5 @@ outputs/*
 # Keep empty scaffold folders
 !prompts/.gitkeep
 !workflows/.gitkeep
+
+datasets/instagram
