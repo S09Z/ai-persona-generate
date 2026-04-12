@@ -26,7 +26,7 @@ num_repeats           = 10                                    # overridden by fo
 
 # ── Model paths ───────────────────────────────────────────────────────────────
 [model]
-pretrained_model_name_or_path = "models/checkpoints/RealVisXL_V4.0"
+pretrained_model_name_or_path = "models/checkpoints/RealVisXL_V4.0/RealVisXL_V4.0.safetensors"
 v2                            = false
 v_parameterization            = false
 sdxl                          = true
@@ -43,7 +43,7 @@ save_every_n_epochs  = 2
 max_train_epochs         = 15
 train_batch_size         = 1            # 1 for MPS / low VRAM
 resolution               = "1024,1024"  # SDXL native
-mixed_precision          = "bf16"       # bf16 safe on MPS + modern CUDA
+mixed_precision             = "no"        # MPS: accelerate 1.6.0 blocks both fp16 AND bf16 on MPS; only "no" (fp32) works
 optimizer_type           = "AdamW8bit"  # use AdamW for MPS (8bit not available)
 learning_rate            = 1e-4
 unet_lr                  = 1e-4

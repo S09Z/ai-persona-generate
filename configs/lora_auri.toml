@@ -23,7 +23,7 @@ num_repeats       = 5
 
 # ── Model ─────────────────────────────────────────────────────────────────────
 [model]
-pretrained_model_name_or_path = "models/checkpoints/RealVisXL_V4.0"
+pretrained_model_name_or_path = "models/checkpoints/RealVisXL_V4.0/RealVisXL_V4.0.safetensors"
 v2                            = false
 v_parameterization            = false
 sdxl                          = true
@@ -40,7 +40,7 @@ save_every_n_epochs  = 2
 max_train_epochs            = 12
 train_batch_size            = 1
 resolution                  = "1024,1024"
-mixed_precision             = "bf16"
+mixed_precision             = "no"        # MPS: accelerate 1.6.0 blocks both fp16 AND bf16 on MPS; only "no" (fp32) works
 optimizer_type              = "AdamW"           # AdamW safe on MPS
 learning_rate               = 1e-4
 unet_lr                     = 1e-4

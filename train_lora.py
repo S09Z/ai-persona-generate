@@ -44,19 +44,24 @@ console = Console()
 KOHYA_DIR = Path("vendor/kohya_ss")
 KOHYA_TRAIN_SCRIPT = KOHYA_DIR / "sdxl_train_network.py"
 KOHYA_REQUIREMENTS = KOHYA_DIR / "requirements.txt"
+# Kohya runs in its own isolated venv to avoid dep conflicts with the main project
+KOHYA_PYTHON = KOHYA_DIR / ".venv" / "bin" / "python"
 
 
 # ── helpers ───────────────────────────────────────────────────────────────────
 
 
 def check_kohya() -> None:
-    """Ensure kohya_ss is present and its deps are installed."""
+    """Ensure kohya_ss is present and its isolated venv is set up."""
     if not KOHYA_DIR.exists():
         console.print(
             Panel(
                 "[red]vendor/kohya_ss not found.[/]\n\n"
                 "Clone it once:\n"
-                "  [bold]git clone https://github.com/kohya-ss/sd-scripts vendor/kohya_ss[/]",
+                "  [bold]git clone https://github.com/kohya-ss/sd-scripts vendor/kohya_ss[/]\n"
+                "Then install deps into its own venv:\n"
+                "  [bold]python3 -m venv vendor/kohya_ss/.venv[/]\n"
+                "  [bold]vendor/kohya_ss/.venv/bin/pip install -r vendor/kohya_ss/requirements.txt[/]",
                 title="Missing kohya_ss",
                 border_style="red",
             )
@@ -67,7 +72,20 @@ def check_kohya() -> None:
         console.print(f"[red]Expected training script not found: {KOHYA_TRAIN_SCRIPT}[/]")
         sys.exit(1)
 
-    console.log(f"[green]kohya_ss found[/] at {KOHYA_DIR}")
+    if not KOHYA_PYTHON.exists():
+        console.print(
+            Panel(
+                "[red]kohya_ss isolated venv not found.[/]\n\n"
+                "Set it up with:\n"
+                "  [bold]python3 -m venv vendor/kohya_ss/.venv[/]\n"
+                "  [bold]vendor/kohya_ss/.venv/bin/pip install -r vendor/kohya_ss/requirements.txt[/]",
+                title="Missing kohya venv",
+                border_style="red",
+            )
+        )
+        sys.exit(1)
+
+    console.log(f"[green]kohya_ss found[/] at {KOHYA_DIR} (venv: {KOHYA_PYTHON})")
 
 
 def install_kohya_deps() -> None:
@@ -128,7 +146,7 @@ def build_command(config_path: Path, device: str, extra_args: list[str]) -> list
     dataset_dir = Path(subsets[0]["image_dir"]) if subsets else None
 
     cmd = [
-        sys.executable,
+        str(KOHYA_PYTHON),
         "-m",
         "accelerate.commands.launch",
         "--mixed_precision",
@@ -137,10 +155,8 @@ def build_command(config_path: Path, device: str, extra_args: list[str]) -> list
         "1",
     ]
 
-    # MPS needs special accelerate flags
-    if device == "mps":
-        cmd += ["--use_mps_device"]
-    elif device == "cpu":
+    # accelerate >= 1.0 auto-detects MPS; --use_mps_device was removed
+    if device == "cpu":
         cmd += ["--cpu"]
 
     cmd += [str(KOHYA_TRAIN_SCRIPT)]
@@ -151,8 +167,11 @@ def build_command(config_path: Path, device: str, extra_args: list[str]) -> list
         pass  # sdxl_train_network.py is already SDXL-specific
 
     # ── dataset ──────────────────────────────────────────────────────────────
+    # kohya expects the PARENT of the <repeats>_<trigger> folder, not the folder itself
+    # e.g. datasets/lora/auri_v1/  (which contains  5_auri_v1/ inside)
     if dataset_dir:
-        cmd += ["--train_data_dir", str(dataset_dir)]
+        train_data_dir = dataset_dir.parent if dataset_dir.name[0].isdigit() else dataset_dir
+        cmd += ["--train_data_dir", str(train_data_dir)]
     cmd += [
         "--caption_extension",
         subsets[0].get("caption_extension", ".txt") if subsets else ".txt",
@@ -160,7 +179,7 @@ def build_command(config_path: Path, device: str, extra_args: list[str]) -> list
 
     # ── bucketing ────────────────────────────────────────────────────────────
     if general_cfg.get("enable_bucket"):
-        cmd += ["--enable_buckets"]
+        cmd += ["--enable_bucket"]
     cmd += [
         "--min_bucket_reso",
         str(general_cfg.get("min_bucket_reso", 512)),
