@@ -1,0 +1,86 @@
+# ── LoRA training config for Luna (RealVisXL_V4.0 / SDXL) ────────────────────
+# Used by: uv run train_lora.py --config configs/lora_luna.toml
+#
+# Tuned for:
+#   - Small dataset (30-100 images)
+#   - Apple Silicon MPS  or  CUDA GPU
+#   - RealVisXL_V4.0 (SDXL-based)
+#
+# Repeat guide:
+#   images x repeats = effective steps per epoch
+#   30 images x 10 repeats = 300 steps/epoch
+#   Train ~10-15 epochs = 3000-4500 total steps  ->  good LoRA quality
+
+[general]
+enable_bucket          = true        # auto-bucket images by aspect ratio
+min_bucket_reso        = 512
+max_bucket_reso        = 1024
+bucket_reso_steps      = 64
+bucket_no_upscale      = false
+
+[datasets]
+[[datasets.subsets]]
+image_dir             = "datasets/lora/luna_v1/10_luna_v1"   # <repeats>_<trigger>
+caption_extension     = ".txt"
+num_repeats           = 10                                    # overridden by folder name prefix
+
+# ── Model paths ───────────────────────────────────────────────────────────────
+[model]
+pretrained_model_name_or_path = "models/checkpoints/RealVisXL_V4.0"
+v2                            = false
+v_parameterization            = false
+sdxl                          = true
+
+# ── Output ────────────────────────────────────────────────────────────────────
+[output]
+output_dir           = "models/loras"
+output_name          = "luna_v1"         # saves as  models/loras/luna_v1.safetensors
+save_model_as        = "safetensors"
+save_every_n_epochs  = 2
+
+# ── Training hyperparameters ──────────────────────────────────────────────────
+[train]
+max_train_epochs         = 15
+train_batch_size         = 1            # 1 for MPS / low VRAM
+resolution               = "1024,1024"  # SDXL native
+mixed_precision          = "bf16"       # bf16 safe on MPS + modern CUDA
+optimizer_type           = "AdamW8bit"  # use AdamW for MPS (8bit not available)
+learning_rate            = 1e-4
+unet_lr                  = 1e-4
+text_encoder_lr          = 5e-5
+lr_scheduler             = "cosine_with_restarts"
+lr_warmup_steps          = 100
+lr_scheduler_num_cycles  = 3
+gradient_checkpointing   = true
+gradient_accumulation_steps = 4        # effective batch = 4 on MPS
+seed                     = 42
+clip_skip                = 2           # RealVis was trained with clip_skip=2
+
+# ── LoRA specific ─────────────────────────────────────────────────────────────
+[lora]
+network_module = "networks.lora"
+network_dim    = 32              # rank: 16-32 for faces, 64 for style
+network_alpha  = 16              # alpha = dim/2 is standard
+# Train both UNet and both text encoders for SDXL
+network_train_unet_only = false
+
+# ── Captions / augmentation ───────────────────────────────────────────────────
+[caption]
+shuffle_caption        = true     # randomise comma-separated tags
+keep_tokens            = 1        # always keep trigger word first
+caption_dropout_rate   = 0.05    # 5% chance to drop caption -> improves flexibility
+caption_dropout_every_n_epochs = 5
+
+# ── Logging ───────────────────────────────────────────────────────────────────
+[logging]
+log_with       = "tensorboard"
+logging_dir    = "logs/lora_luna"
+
+# ── Sampling (preview images during training) ────────────────────────────────
+[sample]
+sample_every_n_epochs = 3
+sample_sampler        = "euler_a"
+sample_prompts        = [
+    "luna_v1, portrait photo of a young woman, warm golden hour light, soft smile, 85mm lens",
+    "luna_v1, fashion editorial photo, studio lighting, elegant pose",
+]

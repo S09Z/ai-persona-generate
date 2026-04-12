@@ -21,8 +21,8 @@
     "camera_settings": "shot on 85mm f/1.4 lens, shallow depth of field, bokeh background"
   },
   "lora": {
-    "path": "",
-    "trigger_word": "",
+    "path": "models/loras/luna_v1.safetensors",
+    "trigger_word": "luna_v1",
     "weight": 0.8
   },
   "ip_adapter_reference_images": [],

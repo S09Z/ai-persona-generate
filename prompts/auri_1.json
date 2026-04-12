@@ -1,0 +1,35 @@
+{
+  "name": "Auri",
+  "mode": "artistic_implied_nude",
+  "prompt_base": "(masterpiece, best quality, photorealistic), Auri, 23 years old, asian mixed with european features, light sky blue eyes, short amber brown hair, snow white skin, natural makeup, soft blush, soft expression, gentle smile, elegant feminine aura",
+
+  "body_style": "curvy fit body, soft toned, hourglass figure, natural proportions",
+
+  "coverage": "implied nude, covered body, strategic framing, no explicit exposure, draped fabric, towel, bedsheet, or shadow covering",
+
+  "pose_style": [
+    "lying on bed covered with sheet",
+    "back pose with shoulder visible",
+    "side silhouette with soft light",
+    "wrapped in towel after shower"
+  ],
+
+  "scenes": [
+    "soft bedroom morning light",
+    "bathroom mirror foggy glass",
+    "window light silhouette",
+    "minimal studio soft backdrop"
+  ],
+
+  "lighting": "soft diffused light, rim light, silhouette lighting, cinematic shadows",
+  "camera": "85mm lens, shallow depth of field, focus on face and mood",
+
+  "mood": [
+    "intimate",
+    "soft",
+    "elegant",
+    "tasteful",
+    "calm"
+  ],
+  "negative_prompt": "(explicit nude, nipples, genitals, porn, sex, spread legs, erotic pose, bad anatomy, extra fingers, deformed body, low quality, watermark, text)"
+}
