@@ -30,6 +30,7 @@ Requirements (run once):
 from __future__ import annotations
 
 import argparse
+import json
 import subprocess
 import sys
 import tomllib
@@ -428,15 +429,43 @@ def main() -> None:
 
     run_training(cmd)
 
-    # ── post-training: print where LoRA was saved ─────────────────────────────
+    # ── post-training: update character JSON with new LoRA path ────────────────
     output_dir = Path(cfg.get("output", {}).get("output_dir", "models/loras"))
     output_name = cfg.get("output", {}).get("output_name", "lora")
     lora_path = output_dir / f"{output_name}.safetensors"
-    console.print(f"\nLoRA saved to: [bold cyan]{lora_path}[/]")
-    console.print(
-        f"\nUpdate [bold]characters/luna.json[/] lora.path → [dim]{lora_path}[/]\n"
-        f"and    lora.trigger_word → [dim]{trigger}[/]"
-    )
+
+    console.rule("[bold green]Training complete![/]")
+    console.print(f"\n[bold green]✅ LoRA saved to:[/] [bold cyan]{lora_path}[/]\n")
+
+    char_json_path = cfg.get("output", {}).get("character_json", "")
+    if char_json_path:
+        char_json = Path(char_json_path)
+        if char_json.exists():
+            data = json.loads(char_json.read_text(encoding="utf-8"))
+            data.setdefault("lora", {})
+            data["lora"]["path"] = str(lora_path)
+            data["lora"]["trigger_word"] = output_name
+            data["lora"].setdefault("weight", 0.8)
+            char_json.write_text(
+                json.dumps(data, indent=2, ensure_ascii=False) + "\n",
+                encoding="utf-8",
+            )
+            console.print(f"[bold green]✅ Updated:[/] [bold]{char_json}[/]")
+            console.print(f"   lora.path          → [cyan]{lora_path}[/]")
+            console.print(f"   lora.trigger_word  → [cyan]{output_name}[/]")
+            console.print(f"   lora.weight        → [cyan]{data['lora']['weight']}[/]\n")
+        else:
+            console.print(
+                f"[yellow]⚠️  character_json not found: {char_json}[/]\n"
+                f"   Set lora.path manually → [cyan]{lora_path}[/]"
+            )
+    else:
+        console.print(
+            f"[yellow]No character_json set in config.[/]\n"
+            f"   Update your character JSON manually:\n"
+            f"   lora.path         → [cyan]{lora_path}[/]\n"
+            f"   lora.trigger_word → [cyan]{output_name}[/]"
+        )
 
 
 if __name__ == "__main__":

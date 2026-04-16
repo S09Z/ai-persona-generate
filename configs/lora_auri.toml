@@ -34,17 +34,18 @@ output_dir           = "models/loras"
 output_name          = "auri_v1"
 save_model_as        = "safetensors"
 save_every_n_epochs  = 2
+character_json       = "characters/auri.json"
 
 # ── Training hyperparameters ──────────────────────────────────────────────────
 [train]
 max_train_epochs            = 12
 train_batch_size            = 1
 resolution                  = "768,768"   # 1024→768: ~44% less attention memory (quadratic)
-mixed_precision             = "no"        # MPS: accelerate 1.6.0 blocks both fp16 AND bf16 on MPS; only "no" (fp32) works
-cache_text_encoder_outputs  = true        # precompute TE embeddings once → frees ~2 GB during training
+mixed_precision             = "bf16"      # MPS patched: is_bf16_available() returns True; bf16 is stable on MPS (no GradScaler needed)
 optimizer_type              = "AdamW"     # AdamW safe on MPS
 learning_rate               = 1e-4
 unet_lr                     = 1e-4
+text_encoder_lr             = 5e-5
 lr_scheduler                = "cosine_with_restarts"
 lr_warmup_steps             = 75                # halved to match grad_accum reduction
 lr_scheduler_num_cycles     = 3
@@ -57,7 +58,7 @@ seed                        = 42
 network_module          = "networks.lora"
 network_dim             = 32                    # rank 32: good balance face + style
 network_alpha           = 16
-network_train_unet_only = true          # required when cache_text_encoder_outputs=true
+network_train_unet_only = false
 
 # ── Caption / augmentation ────────────────────────────────────────────────────
 # Auri appearance keywords injected by prepare_dataset.py from auri.json

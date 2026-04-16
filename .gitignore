@@ -39,4 +39,6 @@ outputs/*
 !prompts/.gitkeep
 !workflows/.gitkeep
 
-datasets/instagram
+datasets/**
+!datasets/**/
+!datasets/**/*.txt

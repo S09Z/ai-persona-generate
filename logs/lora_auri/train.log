@@ -1,4 +1,4 @@
-[17:00:09] kohya_ss found at vendor/kohya_ss (venv:             train_lora.py:88
+[13:44:57] kohya_ss found at vendor/kohya_ss (venv:             train_lora.py:89
            vendor/kohya_ss/.venv/bin/python)                                    
 ───────────────────────────── LoRA Training Setup ──────────────────────────────
  config       configs/lora_auri.toml                                       
@@ -9,19 +9,19 @@
  epochs       12                                                           
  rank (dim)   32                                                           
 
-           Dataset: 187 images, 187 captions                   train_lora.py:110
-             ✓ 0132_69144761038402_7798868468700781907_n.txt:  train_lora.py:124
-           auri_v1, two women in a room with a lot of people                    
-           standing around                                                      
-             ✓ 0134_64368926038402_2726071140438318957_n.txt:  train_lora.py:124
+           Dataset: 132 images, 132 captions                   train_lora.py:111
+             ✓ 0134_64368926038402_2726071140438318957_n.txt:  train_lora.py:125
            auri_v1, blond woman in a black and pink swimsuit                    
            standing in front of a counter                                       
-             ✓ 0031_22661530659226_3067188901703097715_n.txt:  train_lora.py:124
+             ✓ 0031_22661530659226_3067188901703097715_n.txt:  train_lora.py:125
            auri_v1, a woman in a black bikini top and a white                   
            bandana is posing for a pictu                                        
+             ✓ 0139_64368980038402_3355049652821617278_n.txt:  train_lora.py:125
+           auri_v1, there is a woman sitting on the floor                       
+           holding a purple object                                              
 ╭─────────────────────────────── Launch command ───────────────────────────────╮
 │ vendor/kohya_ss/.venv/bin/python -m accelerate.commands.launch               │
-│ --mixed_precision no --num_processes \                                       │
+│ --mixed_precision bf16 --num_processes \                                     │
 │   1 \                                                                        │
 │   vendor/kohya_ss/sdxl_train_network.py \                                    │
 │   --pretrained_model_name_or_path \                                          │
@@ -34,7 +34,7 @@
 │   --min_bucket_reso \                                                        │
 │   512 \                                                                      │
 │   --max_bucket_reso \                                                        │
-│   1024 \                                                                     │
+│   768 \                                                                      │
 │   --bucket_reso_steps \                                                      │
 │   64 \                                                                       │
 │   --output_dir \                                                             │
@@ -50,9 +50,9 @@
 │   --train_batch_size \                                                       │
 │   1 \                                                                        │
 │   --resolution \                                                             │
-│   1024,1024 \                                                                │
+│   768,768 \                                                                  │
 │   --mixed_precision \                                                        │
-│   no \                                                                       │
+│   bf16 \                                                                     │
 │   --optimizer_type \                                                         │
 │   AdamW \                                                                    │
 │   --learning_rate \                                                          │
@@ -64,11 +64,11 @@
 │   --lr_scheduler \                                                           │
 │   cosine_with_restarts \                                                     │
 │   --lr_warmup_steps \                                                        │
-│   150 \                                                                      │
+│   75 \                                                                       │
 │   --lr_scheduler_num_cycles \                                                │
 │   3 \                                                                        │
 │   --gradient_accumulation_steps \                                            │
-│   4 \                                                                        │
+│   2 \                                                                        │
 │   --clip_skip \                                                              │
 │   2 \                                                                        │
 │   --seed \                                                                   │
@@ -105,33 +105,33 @@ used instead:
         `--dynamo_backend` was set to a value of `'no'`
 To avoid this warning pass in values for each of the problematic parameters or 
 run `accelerate config`.
-2026-04-12 17:00:14 INFO     Using DreamBooth method.       train_network.py:513
+2026-04-13 13:45:05 INFO     Using DreamBooth method.       train_network.py:513
                     INFO     prepare images.                  train_util.py:2141
                     INFO     get image size from name of      train_util.py:2016
                              cache files                                        
 
-  0%|          | 0/187 [00:00<?, ?it/s]
-100%|██████████| 187/187 [00:00<00:00, 1246955.24it/s]
+  0%|          | 0/132 [00:00<?, ?it/s]
+100%|██████████| 132/132 [00:00<00:00, 949653.74it/s]
                     INFO     set image size from cache files: train_util.py:2046
-                             0/187                                              
+                             0/132                                              
                     INFO     found directory                  train_util.py:2088
                              datasets/lora/auri_v1/5_auri_v1                    
-                             contains 187 image files                           
+                             contains 132 image files                           
 
-read caption:   0%|          | 0/187 [00:00<?, ?it/s]
-read caption: 100%|██████████| 187/187 [00:00<00:00, 9636.63it/s]
-                    INFO     935 train images with repeats.   train_util.py:2187
+read caption:   0%|          | 0/132 [00:00<?, ?it/s]
+read caption: 100%|██████████| 132/132 [00:00<00:00, 10138.22it/s]
+                    INFO     660 train images with repeats.   train_util.py:2187
                     INFO     0 reg images with repeats.       train_util.py:2191
                     WARNING  no regularization images /       train_util.py:2196
                              正則化画像が見つかりませんでした                   
                     INFO     [Dataset 0]                      config_util.py:584
                                batch_size: 1                                    
-                               resolution: (1024, 1024)                         
+                               resolution: (768, 768)                           
                                skip_image_resolution: None                      
                                resize_interpolation: None                       
                                enable_bucket: True                              
                                min_bucket_reso: 512                             
-                               max_bucket_reso: 1024                            
+                               max_bucket_reso: 768                             
                                bucket_reso_steps: 64                            
                                bucket_no_upscale: False                         
                                                                                 
@@ -139,7 +139,7 @@ read caption: 100%|██████████| 187/187 [00:00<00:00, 9636.63
                                  image_dir:                                     
                              "datasets/lora/auri_v1/5_auri_v1                   
                              "                                                  
-                                 image_count: 187                               
+                                 image_count: 132                               
                                  num_repeats: 5                                 
                                  shuffle_caption: True                          
                                  keep_tokens: 1                                 
@@ -167,23 +167,23 @@ read caption: 100%|██████████| 187/187 [00:00<00:00, 9636.63
                     INFO     [Prepare dataset 0]              config_util.py:596
                     INFO     loading image sizes.              train_util.py:995
 
-  0%|          | 0/187 [00:00<?, ?it/s]
-100%|██████████| 187/187 [00:00<00:00, 7925.38it/s]
+  0%|          | 0/132 [00:00<?, ?it/s]
+ 41%|████      | 54/132 [00:00<00:00, 535.71it/s]
+ 84%|████████▍ | 111/132 [00:00<00:00, 553.85it/s]
+100%|██████████| 132/132 [00:00<00:00, 552.19it/s]
                     INFO     make buckets                     train_util.py:1018
                     INFO     number of images (including      train_util.py:1064
                              repeats) /                                         
                              各bucketの画像枚数（繰り返し回数                   
                              を含む）                                           
-                    INFO     bucket 0: resolution (576,       train_util.py:1069
-                             1024), count: 155                                  
-                    INFO     bucket 1: resolution (768,       train_util.py:1069
-                             1024), count: 285                                  
-                    INFO     bucket 2: resolution (832,       train_util.py:1069
-                             1024), count: 475                                  
-                    INFO     bucket 3: resolution (1024,      train_util.py:1069
-                             768), count: 20                                    
+                    INFO     bucket 0: resolution (512, 768), train_util.py:1069
+                             count: 75                                          
+                    INFO     bucket 1: resolution (576, 768), train_util.py:1069
+                             count: 230                                         
+                    INFO     bucket 2: resolution (640, 768), train_util.py:1069
+                             count: 355                                         
                     INFO     mean ar error (without repeats): train_util.py:1077
-                             0.006696757686186199                               
+                             0.03002006730499348                                
                     WARNING  clip_skip will be unexpected sdxl_train_util.py:352
                              /                                                  
                              SDXL学習ではclip_skipは動作                        
@@ -195,236 +195,83 @@ read caption: 100%|██████████| 187/187 [00:00<00:00, 9636.63
                              models/checkpoints/RealVisXL_                      
                              V4.0/RealVisXL_V4.0.safetenso                      
                              rs                                                 
-                    INFO     building U-Net               sdxl_model_util.py:198
+2026-04-13 13:45:06 INFO     building U-Net               sdxl_model_util.py:198
                     INFO     loading U-Net from           sdxl_model_util.py:202
                              checkpoint                                         
-2026-04-12 17:00:33 INFO     U-Net: <All keys matched     sdxl_model_util.py:208
+2026-04-13 13:45:38 INFO     U-Net: <All keys matched     sdxl_model_util.py:208
                              successfully>                                      
                     INFO     building text encoders       sdxl_model_util.py:211
-2026-04-12 17:00:34 INFO     loading text encoders from   sdxl_model_util.py:264
+2026-04-13 13:45:39 INFO     loading text encoders from   sdxl_model_util.py:264
                              checkpoint                                         
-2026-04-12 17:00:35 INFO     text encoder 1: <All keys    sdxl_model_util.py:278
+2026-04-13 13:45:40 INFO     text encoder 1: <All keys    sdxl_model_util.py:278
                              matched successfully>                              
-2026-04-12 17:00:41 INFO     text encoder 2: <All keys    sdxl_model_util.py:282
+2026-04-13 13:45:49 INFO     text encoder 2: <All keys    sdxl_model_util.py:282
                              matched successfully>                              
                     INFO     building VAE                 sdxl_model_util.py:285
                     INFO     loading VAE from checkpoint  sdxl_model_util.py:290
-2026-04-12 17:00:42 INFO     VAE: <All keys matched       sdxl_model_util.py:293
+2026-04-13 13:45:50 INFO     VAE: <All keys matched       sdxl_model_util.py:293
                              successfully>                                      
-2026-04-12 17:00:44 INFO     create LoRA network. base dim (rank):   lora.py:935
+2026-04-13 13:45:53 INFO     create LoRA network. base dim (rank):   lora.py:935
                              32, alpha: 16.0                                    
                     INFO     neuron dropout: p=None, rank dropout:   lora.py:936
                              p=None, module dropout: p=None                     
                     INFO     create LoRA for Text Encoder 1:        lora.py:1027
                     INFO     create LoRA for Text Encoder 2:        lora.py:1027
-                    INFO     create LoRA for Text Encoder: 264      lora.py:1035
+2026-04-13 13:45:54 INFO     create LoRA for Text Encoder: 264      lora.py:1035
                              modules.                                           
                     INFO     create LoRA for U-Net: 722 modules.    lora.py:1043
                     INFO     enable LoRA for text encoder: 264      lora.py:1084
                              modules                                            
                     INFO     enable LoRA for U-Net: 722 modules     lora.py:1089
                     INFO     use AdamW optimizer | {}         train_util.py:5159
-2026-04-12 17:01:36 INFO     unet dtype: torch.float32,    train_network.py:1332
+2026-04-13 13:47:03 INFO     unet dtype: torch.bfloat16,   train_network.py:1332
                              device: mps:0                                      
                     INFO     text_encoder [0] dtype:       train_network.py:1338
-                             torch.float32, device: mps:0                       
+                             torch.bfloat16, device: mps:0                      
                     INFO     text_encoder [1] dtype:       train_network.py:1338
-                             torch.float32, device: mps:0                       
+                             torch.bfloat16, device: mps:0                      
 accelerator device: mps
 import network module: networks.lora
 prepare optimizer, data loader etc.
-override steps. steps for 12 epochs is / 指定エポックまでのステップ数: 2808
+override steps. steps for 12 epochs is / 指定エポックまでのステップ数: 3960
 running training / 学習開始
-  num train images * repeats / 学習画像の数×繰り返し回数: 935
+  num train images * repeats / 学習画像の数×繰り返し回数: 660
   num validation images * repeats / 学習画像の数×繰り返し回数: 0
   num reg images / 正則化画像の数: 0
-  num batches per epoch / 1epochのバッチ数: 935
+  num batches per epoch / 1epochのバッチ数: 660
   num epochs / epoch数: 12
   batch size per device / バッチサイズ: 1
-  gradient accumulation steps / 勾配を合計するステップ数 = 4
-  total optimization steps / 学習ステップ数: 2808
+  gradient accumulation steps / 勾配を合計するステップ数 = 2
+  total optimization steps / 学習ステップ数: 3960
 
-steps:   0%|          | 0/2808 [00:00<?, ?it/s]
+steps:   0%|          | 0/3960 [00:00<?, ?it/s]
 epoch 1/12
 
-2026-04-12 17:02:01 INFO     epoch is incremented.             train_util.py:787
+2026-04-13 13:47:29 INFO     epoch is incremented.             train_util.py:787
                              current_epoch: 0, epoch: 1                         
-2026-04-12 17:02:01 INFO     epoch is incremented.             train_util.py:787
+2026-04-13 13:47:29 INFO     epoch is incremented.             train_util.py:787
                              current_epoch: 0, epoch: 1                         
-2026-04-12 17:02:01 INFO     epoch is incremented.             train_util.py:787
+2026-04-13 13:47:29 INFO     epoch is incremented.             train_util.py:787
                              current_epoch: 0, epoch: 1                         
-2026-04-12 17:02:01 INFO     epoch is incremented.             train_util.py:787
+2026-04-13 13:47:29 INFO     epoch is incremented.             train_util.py:787
                              current_epoch: 0, epoch: 1                         
-2026-04-12 17:02:01 INFO     epoch is incremented.             train_util.py:787
+2026-04-13 13:47:29 INFO     epoch is incremented.             train_util.py:787
                              current_epoch: 0, epoch: 1                         
-2026-04-12 17:02:01 INFO     epoch is incremented.             train_util.py:787
+2026-04-13 13:47:29 INFO     epoch is incremented.             train_util.py:787
                              current_epoch: 0, epoch: 1                         
-2026-04-12 17:02:01 INFO     epoch is incremented.             train_util.py:787
+2026-04-13 13:47:29 INFO     epoch is incremented.             train_util.py:787
                              current_epoch: 0, epoch: 1                         
-2026-04-12 17:02:01 INFO     epoch is incremented.             train_util.py:787
+2026-04-13 13:47:29 INFO     epoch is incremented.             train_util.py:787
                              current_epoch: 0, epoch: 1                         
 
-steps:   0%|          | 0/2808 [02:31<?, ?it/s, avr_loss=0.31]
-steps:   0%|          | 0/2808 [05:05<?, ?it/s, avr_loss=0.27]
-steps:   0%|          | 0/2808 [07:34<?, ?it/s, avr_loss=0.186]
-steps:   0%|          | 1/2808 [09:49<459:56:25, 589.88s/it, avr_loss=0.186]
-steps:   0%|          | 1/2808 [09:49<459:56:27, 589.88s/it, avr_loss=0.166]
-steps:   0%|          | 1/2808 [12:31<585:52:55, 751.40s/it, 
-avr_loss=0.175]Traceback (most recent call last):
-  File 
-"/Users/ittichaib/LABDIR/AI-labs/idol-generate/vendor/kohya_ss/sdxl_train_networ
-k.py", line 234, in <module>
-    trainer.train(args)
-  File 
-"/Users/ittichaib/LABDIR/AI-labs/idol-generate/vendor/kohya_ss/train_network.py"
-, line 1412, in train
-    loss = self.process_batch(
-           ^^^^^^^^^^^^^^^^^^^
-  File 
-"/Users/ittichaib/LABDIR/AI-labs/idol-generate/vendor/kohya_ss/train_network.py"
-, line 380, in process_batch
-    latents = self.encode_images_to_latents(args, vae, 
-batch["images"].to(accelerator.device, dtype=vae_dtype))
-              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File 
-"/Users/ittichaib/LABDIR/AI-labs/idol-generate/vendor/kohya_ss/train_network.py"
-, line 238, in encode_images_to_latents
-    return vae.encode(images).latent_dist.sample()
-           ^^^^^^^^^^^^^^^^^^
-  File 
-"/Users/ittichaib/LABDIR/AI-labs/idol-generate/vendor/kohya_ss/.venv/lib/python3
-.11/site-packages/diffusers/utils/accelerate_utils.py", line 46, in wrapper
-    return method(self, *args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File 
-"/Users/ittichaib/LABDIR/AI-labs/idol-generate/vendor/kohya_ss/.venv/lib/python3
-.11/site-packages/diffusers/models/autoencoders/autoencoder_kl.py", line 282, in
-encode
-    h = self._encode(x)
-        ^^^^^^^^^^^^^^^
-  File 
-"/Users/ittichaib/LABDIR/AI-labs/idol-generate/vendor/kohya_ss/.venv/lib/python3
-.11/site-packages/diffusers/models/autoencoders/autoencoder_kl.py", line 256, in
-_encode
-    enc = self.encoder(x)
-          ^^^^^^^^^^^^^^^
-  File 
-"/Users/ittichaib/LABDIR/AI-labs/idol-generate/vendor/kohya_ss/.venv/lib/python3
-.11/site-packages/torch/nn/modules/module.py", line 1779, in _wrapped_call_impl
-    return self._call_impl(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File 
-"/Users/ittichaib/LABDIR/AI-labs/idol-generate/vendor/kohya_ss/.venv/lib/python3
-.11/site-packages/torch/nn/modules/module.py", line 1790, in _call_impl
-    return forward_call(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File 
-"/Users/ittichaib/LABDIR/AI-labs/idol-generate/vendor/kohya_ss/.venv/lib/python3
-.11/site-packages/diffusers/models/autoencoders/vae.py", line 185, in forward
-    sample = down_block(sample)
-             ^^^^^^^^^^^^^^^^^^
-  File 
-"/Users/ittichaib/LABDIR/AI-labs/idol-generate/vendor/kohya_ss/.venv/lib/python3
-.11/site-packages/torch/nn/modules/module.py", line 1779, in _wrapped_call_impl
-    return self._call_impl(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File 
-"/Users/ittichaib/LABDIR/AI-labs/idol-generate/vendor/kohya_ss/.venv/lib/python3
-.11/site-packages/torch/nn/modules/module.py", line 1790, in _call_impl
-    return forward_call(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File 
-"/Users/ittichaib/LABDIR/AI-labs/idol-generate/vendor/kohya_ss/.venv/lib/python3
-.11/site-packages/diffusers/models/unets/unet_2d_blocks.py", line 1520, in 
-forward
-    hidden_states = resnet(hidden_states, temb=None)
-                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File 
-"/Users/ittichaib/LABDIR/AI-labs/idol-generate/vendor/kohya_ss/.venv/lib/python3
-.11/site-packages/torch/nn/modules/module.py", line 1779, in _wrapped_call_impl
-    return self._call_impl(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File 
-"/Users/ittichaib/LABDIR/AI-labs/idol-generate/vendor/kohya_ss/.venv/lib/python3
-.11/site-packages/torch/nn/modules/module.py", line 1790, in _call_impl
-    return forward_call(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File 
-"/Users/ittichaib/LABDIR/AI-labs/idol-generate/vendor/kohya_ss/.venv/lib/python3
-.11/site-packages/diffusers/models/resnet.py", line 351, in forward
-    hidden_states = self.norm2(hidden_states)
-                    ^^^^^^^^^^^^^^^^^^^^^^^^^
-  File 
-"/Users/ittichaib/LABDIR/AI-labs/idol-generate/vendor/kohya_ss/.venv/lib/python3
-.11/site-packages/torch/nn/modules/module.py", line 1779, in _wrapped_call_impl
-    return self._call_impl(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File 
-"/Users/ittichaib/LABDIR/AI-labs/idol-generate/vendor/kohya_ss/.venv/lib/python3
-.11/site-packages/torch/nn/modules/module.py", line 1790, in _call_impl
-    return forward_call(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File 
-"/Users/ittichaib/LABDIR/AI-labs/idol-generate/vendor/kohya_ss/.venv/lib/python3
-.11/site-packages/torch/nn/modules/normalization.py", line 327, in forward
-    return F.group_norm(input, self.num_groups, self.weight, self.bias, 
-self.eps)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-^
-  File 
-"/Users/ittichaib/LABDIR/AI-labs/idol-generate/vendor/kohya_ss/.venv/lib/python3
-.11/site-packages/torch/nn/functional.py", line 2990, in group_norm
-    return torch.group_norm(
-           ^^^^^^^^^^^^^^^^^
-  File 
-"/Users/ittichaib/LABDIR/AI-labs/idol-generate/vendor/kohya_ss/.venv/lib/python3
-.11/site-packages/torch/_refs/__init__.py", line 3395, in native_group_norm
-    out = out * unsqueeze_weight
-          ~~~~^~~~~~~~~~~~~~~~~~
-RuntimeError: MPS backend out of memory (MPS allocated: 19.11 GiB, other 
-allocations: 413.25 MiB, max allowed: 20.13 GiB). Tried to allocate 416.00 MiB 
-on private pool. Use PYTORCH_MPS_HIGH_WATERMARK_RATIO=0.0 to disable upper limit
-for memory allocations (may cause system failure).
-
-steps:   0%|          | 1/2808 [13:14<619:18:28, 794.27s/it, avr_loss=0.175]
-Traceback (most recent call last):
-  File "<frozen runpy>", line 198, in _run_module_as_main
-  File "<frozen runpy>", line 88, in _run_code
-  File 
-"/Users/ittichaib/LABDIR/AI-labs/idol-generate/vendor/kohya_ss/.venv/lib/python3
-.11/site-packages/accelerate/commands/launch.py", line 1223, in <module>
-    main()
-  File 
-"/Users/ittichaib/LABDIR/AI-labs/idol-generate/vendor/kohya_ss/.venv/lib/python3
-.11/site-packages/accelerate/commands/launch.py", line 1219, in main
-    launch_command(args)
-  File 
-"/Users/ittichaib/LABDIR/AI-labs/idol-generate/vendor/kohya_ss/.venv/lib/python3
-.11/site-packages/accelerate/commands/launch.py", line 1213, in launch_command
-    simple_launcher(args)
-  File 
-"/Users/ittichaib/LABDIR/AI-labs/idol-generate/vendor/kohya_ss/.venv/lib/python3
-.11/site-packages/accelerate/commands/launch.py", line 795, in simple_launcher
-    raise subprocess.CalledProcessError(returncode=process.returncode, cmd=cmd)
-subprocess.CalledProcessError: Command 
-'['/Users/ittichaib/LABDIR/AI-labs/idol-generate/vendor/kohya_ss/.venv/bin/pytho
-n', 'vendor/kohya_ss/sdxl_train_network.py', '--pretrained_model_name_or_path', 
-'models/checkpoints/RealVisXL_V4.0/RealVisXL_V4.0.safetensors', 
-'--train_data_dir', 'datasets/lora/auri_v1', '--caption_extension', '.txt', 
-'--enable_bucket', '--min_bucket_reso', '512', '--max_bucket_reso', '1024', 
-'--bucket_reso_steps', '64', '--output_dir', 'models/loras', '--output_name', 
-'auri_v1', '--save_model_as', 'safetensors', '--save_every_n_epochs', '2', 
-'--max_train_epochs', '12', '--train_batch_size', '1', '--resolution', 
-'1024,1024', '--mixed_precision', 'no', '--optimizer_type', 'AdamW', 
-'--learning_rate', '0.0001', '--unet_lr', '0.0001', '--text_encoder_lr', 
-'5e-05', '--lr_scheduler', 'cosine_with_restarts', '--lr_warmup_steps', '150', 
-'--lr_scheduler_num_cycles', '3', '--gradient_accumulation_steps', '4', 
-'--clip_skip', '2', '--seed', '42', '--gradient_checkpointing', 
-'--network_module', 'networks.lora', '--network_dim', '32', '--network_alpha', 
-'16', '--shuffle_caption', '--keep_tokens', '1', '--caption_dropout_rate', 
-'0.05', '--log_with', 'tensorboard', '--logging_dir', 'logs/lora_auri', 
-'--sample_every_n_epochs', '2', '--sample_sampler', 'euler_a', 
-'--sample_prompts', 'configs/_sample_prompts.txt']' returned non-zero exit 
-status 1.
-Training exited with code 1
+steps:   0%|          | 0/3960 [01:08<?, ?it/s, avr_loss=nan]
+steps:   0%|          | 1/3960 [01:29<98:45:54, 89.81s/it, avr_loss=nan]
+steps:   0%|          | 1/3960 [01:29<98:49:13, 89.86s/it, avr_loss=nan]
+steps:   0%|          | 1/3960 [01:57<129:44:32, 117.98s/it, avr_loss=nan]
+steps:   0%|          | 2/3960 [02:39<87:26:09, 79.53s/it, avr_loss=nan]  
+steps:   0%|          | 2/3960 [02:39<87:26:11, 79.53s/it, 
+avr_loss=nan]/Users/ittichaib/.pyenv/versions/3.11.14/lib/python3.11/multiproces
+sing/resource_tracker.py:254: UserWarning: resource_tracker: There appear to be 
+35 leaked semaphore objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '
+Training exited with code -15
