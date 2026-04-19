@@ -31,6 +31,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import platform
 import subprocess
 import sys
 import tomllib
@@ -46,7 +47,9 @@ KOHYA_DIR = Path("vendor/kohya_ss")
 KOHYA_TRAIN_SCRIPT = KOHYA_DIR / "sdxl_train_network.py"
 KOHYA_REQUIREMENTS = KOHYA_DIR / "requirements.txt"
 # Kohya runs in its own isolated venv to avoid dep conflicts with the main project
-KOHYA_PYTHON = KOHYA_DIR / ".venv" / "bin" / "python"
+# Use platform-appropriate paths (Windows: Scripts/python.exe, Unix: bin/python)
+IS_WINDOWS = platform.system() == "Windows"
+KOHYA_PYTHON = KOHYA_DIR / ".venv" / ("Scripts" if IS_WINDOWS else "bin") / ("python.exe" if IS_WINDOWS else "python")
 
 
 # ── helpers ───────────────────────────────────────────────────────────────────
@@ -55,14 +58,15 @@ KOHYA_PYTHON = KOHYA_DIR / ".venv" / "bin" / "python"
 def check_kohya() -> None:
     """Ensure kohya_ss is present and its isolated venv is set up."""
     if not KOHYA_DIR.exists():
+        venv_pip = "vendor\\kohya_ss\\.venv\\Scripts\\pip" if IS_WINDOWS else "vendor/kohya_ss/.venv/bin/pip"
         console.print(
             Panel(
                 "[red]vendor/kohya_ss not found.[/]\n\n"
                 "Clone it once:\n"
                 "  [bold]git clone https://github.com/kohya-ss/sd-scripts vendor/kohya_ss[/]\n"
                 "Then install deps into its own venv:\n"
-                "  [bold]python3 -m venv vendor/kohya_ss/.venv[/]\n"
-                "  [bold]vendor/kohya_ss/.venv/bin/pip install -r vendor/kohya_ss/requirements.txt[/]",
+                "  [bold]python -m venv vendor/kohya_ss/.venv[/]\n"
+                f"  [bold]{venv_pip} install -r vendor/kohya_ss/requirements.txt[/]",
                 title="Missing kohya_ss",
                 border_style="red",
             )
@@ -74,12 +78,13 @@ def check_kohya() -> None:
         sys.exit(1)
 
     if not KOHYA_PYTHON.exists():
+        venv_pip = "vendor\\kohya_ss\\.venv\\Scripts\\pip" if IS_WINDOWS else "vendor/kohya_ss/.venv/bin/pip"
         console.print(
             Panel(
                 "[red]kohya_ss isolated venv not found.[/]\n\n"
                 "Set it up with:\n"
-                "  [bold]python3 -m venv vendor/kohya_ss/.venv[/]\n"
-                "  [bold]vendor/kohya_ss/.venv/bin/pip install -r vendor/kohya_ss/requirements.txt[/]",
+                "  [bold]python -m venv vendor/kohya_ss/.venv[/]\n"
+                f"  [bold]{venv_pip} install -r vendor/kohya_ss/requirements.txt[/]",
                 title="Missing kohya venv",
                 border_style="red",
             )

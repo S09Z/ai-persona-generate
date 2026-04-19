@@ -14,6 +14,7 @@ min_bucket_reso        = 512
 max_bucket_reso        = 768         # capped to training resolution (memory)
 bucket_reso_steps      = 64
 bucket_no_upscale      = false
+train_data_dir = "datasets/lora/auri_v1"
 
 [datasets]
 [[datasets.subsets]]
@@ -76,9 +77,5 @@ logging_dir  = "logs/lora_auri"
 # ── Sample preview images every N epochs ─────────────────────────────────────
 [sample]
 sample_every_n_epochs = 2
-sample_sampler        = "euler_a"
-sample_prompts = [
-    "auri_v1, portrait photo of a young woman, light sky blue eyes, short amber brown hair, snow white skin, soft smile, golden hour, 85mm lens, shallow depth of field",
-    "auri_v1, casual fashion, cafe setting, soft natural light, elegant and approachable",
-    "auri_v1, beach walk, warm sunlight, curvy fit body, fresh and natural look",
-]
+sample_sampler = "euler_a"
+sample_prompts = "configs/sample_prompts.txt"

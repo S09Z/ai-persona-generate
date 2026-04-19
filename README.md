@@ -144,6 +144,8 @@ cat datasets/lora/auri_v1/5_auri_v1/0001_*.txt  # preview a caption
 # Start training (logs to logs/lora_auri/)
 uv run train_lora.py --config configs/lora_auri.toml
 
+uv run python vendor/kohya_ss/sdxl_train_network.py --config_file configs/lora_auri.toml --max_train_steps 10
+
 # Run in background
 uv run train_lora.py --config configs/lora_auri.toml \
   > logs/lora_auri/train.log 2>&1 &

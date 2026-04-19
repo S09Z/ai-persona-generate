@@ -7,7 +7,7 @@ wheels/
 *.egg-info
 
 # Virtual environments
-.venv
+.venv*
 
 # Env secrets
 .env
@@ -42,3 +42,4 @@ outputs/*
 datasets/**
 !datasets/**/
 !datasets/**/*.txt
+

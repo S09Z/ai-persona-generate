@@ -41,12 +41,12 @@ dependencies = [
     "spandrel>=0.4.2",
     "sqlalchemy>=2.0.49",
     "tensorboard>=2.20.0",
-    "torch>=2.11.0",
-    "torchaudio>=2.11.0",
     "torchsde>=0.2.6",
-    "torchvision>=0.26.0",
+    "torch",
+    "torchvision",
+    "torchaudio",
     "tqdm>=4.67.3",
-    "transformers>=5.5.3",
+    "transformers>=4.30,<5",
     "websocket-client>=1.9.0",
 ]
 
@@ -55,9 +55,21 @@ idol-generate = "idol_generate.__main__:main"
 
 [tool.uv]
 package = true
+index-strategy = "unsafe-best-match"
+
+override-dependencies = [
+  "torch==2.5.1+cu121",
+  "torchvision==0.20.1+cu121",
+  "torchaudio==2.5.1+cu121",
+]
+
+[[tool.uv.index]]
+url = "https://download.pytorch.org/whl/cu121"
+default = false
 
 [tool.uv.workspace]
 members = ["vendor/ComfyUI"]
+exclude = ["vendor/kohya_ss"]
 
 [build-system]
 requires = ["hatchling"]
@@ -105,3 +117,4 @@ known-first-party = ["idol_generate"]
 quote-style = "double"
 indent-style = "space"
 docstring-code-format = true
+
