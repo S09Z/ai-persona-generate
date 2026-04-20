@@ -1,0 +1,274 @@
+{
+  "last_node_id": 12,
+  "last_link_id": 13,
+  "nodes": [
+    {
+      "id": 4,
+      "type": "CheckpointLoaderSimple",
+      "pos": [50, 250],
+      "size": [320, 100],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [1],
+          "slot_index": 0
+        },
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": [2],
+          "slot_index": 1
+        },
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [3],
+          "slot_index": 2
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CheckpointLoaderSimple"
+      },
+      "widgets_values": [""]
+    },
+    {
+      "id": 11,
+      "type": "LoraLoader",
+      "pos": [450, 250],
+      "size": [320, 130],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 1
+        },
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 2
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [4],
+          "slot_index": 0
+        },
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": [5],
+          "slot_index": 1
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoraLoader"
+      },
+      "widgets_values": ["ill_mizuryu_kei_2_V2_not_b_epoch_12.safetensors", 1.0, 1.0]
+    },
+    {
+      "id": 6,
+      "type": "CLIPTextEncode",
+      "pos": [850, 200],
+      "size": [400, 150],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 5
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [6],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": ["candid amateur photo, (high quality, realistic photo:1.25) of beautiful young asian thai woman in the park, natural lighting"]
+    },
+    {
+      "id": 7,
+      "type": "CLIPTextEncode",
+      "pos": [850, 400],
+      "size": [400, 150],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 5
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [7],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": ["text, watermark, (low quality, medium quality:1.3), nude, nsfw, semi-realistic, cgi, 3d, render, sketch, cartoon, drawing, anime, bad anatomy, bad hands, missing fingers"]
+    },
+    {
+      "id": 5,
+      "type": "EmptyLatentImage",
+      "pos": [850, 600],
+      "size": [320, 110],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [8],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "EmptyLatentImage"
+      },
+      "widgets_values": [512, 512, 1]
+    },
+    {
+      "id": 3,
+      "type": "KSampler",
+      "pos": [1350, 250],
+      "size": [320, 260],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 4
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 6
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 7
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 8
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [9],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "KSampler"
+      },
+      "widgets_values": [50628336617513, "randomize", 25, 7.5, "dpmpp_2m", "karras", 1]
+    },
+    {
+      "id": 8,
+      "type": "VAEDecode",
+      "pos": [1750, 250],
+      "size": [210, 50],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 9
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 3
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [10],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 9,
+      "type": "SaveImage",
+      "pos": [2000, 250],
+      "size": [320, 270],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 10
+        }
+      ],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": ["ComfyUI"]
+    }
+  ],
+  "links": [
+    [1, 4, 0, 11, 0, "MODEL"],
+    [2, 4, 1, 11, 1, "CLIP"],
+    [3, 4, 2, 8, 1, "VAE"],
+    [4, 11, 0, 3, 0, "MODEL"],
+    [5, 11, 1, 6, 0, "CLIP"],
+    [5, 11, 1, 7, 0, "CLIP"],
+    [6, 6, 0, 3, 1, "CONDITIONING"],
+    [7, 7, 0, 3, 2, "CONDITIONING"],
+    [8, 5, 0, 3, 3, "LATENT"],
+    [9, 3, 0, 8, 0, "LATENT"],
+    [10, 8, 0, 9, 0, "IMAGE"]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 1,
+      "offset": [0, 0]
+    }
+  },
+  "version": 0.4
+}
