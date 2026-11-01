@@ -1,0 +1,145 @@
+{
+  "name": "MODEL_001",
+  "age_virtual": 27,
+  "personality_traits": [
+    "confident",
+    "elegant",
+    "approachable",
+    "calm",
+    "tasteful"
+  ],
+  "tone_of_voice": "calm, warm, polished, understated; confident without trying hard",
+  "style": "Thai minimal luxury, quiet luxury, minimal chic with modern luxury accents, effortless sophistication",
+  "backstory": "A Thai fashion muse with a clean, understated eye for style. She shows how affordable pieces can look expensive when styled with restraint: warm neutrals, clean silhouettes and a few gold accents.",
+  "content_themes": [
+    "minimal chic outfits",
+    "modern luxury workwear",
+    "soft elegant knitwear",
+    "evening muse looks",
+    "everyday styling",
+    "product try-on"
+  ],
+  "appearance": {
+    "face": "young Thai woman, soft oval face, warm golden honey skin with yellow-golden undertone, natural realistic skin texture, natural warm makeup, korean-thai look, sweet but confident, not exaggerated",
+    "eye_color": "dark brown eyes",
+    "hair": "long dark hair, black to deep brown, center part, soft natural texture",
+    "body_type": "petite small frame, hourglass shape, visibly defined waist, softly rounded hips, slender proportionate legs, natural realistic anatomy",
+    "signature_features": "large round eyes, calm confident expression, natural subtle smile, elegant relaxed posture"
+  },
+  "visual_style": {
+    "lighting": "soft natural daylight",
+    "color_palette": [
+      "ivory",
+      "sand",
+      "taupe",
+      "mocha",
+      "espresso",
+      "muted gold"
+    ],
+    "texture": "clean editorial, warm neutral grading, natural skin",
+    "mood_keywords": [
+      "understated",
+      "elegant",
+      "warm",
+      "refined",
+      "approachable",
+      "quiet luxury"
+    ],
+    "camera_settings": "fashion editorial, 50mm look, full-body framing, warm minimalist interior or cream backdrop"
+  },
+  "lora": {
+    "path": "",
+    "trigger_word": "",
+    "weight": 0.8
+  },
+  "ip_adapter_reference_images": [],
+  "emoji_pool": [
+    "🤍",
+    "✨",
+    "🕊️",
+    "☕"
+  ],
+  "past_events": [],
+
+  "character_bible": {
+    "id": "MODEL_001",
+    "version": "0.3",
+    "status": "face_locked_master_face_pending",
+    "project": "Thai fashion AI influencer for affiliate fashion content",
+    "locked_choices": {
+      "face_shape": "soft_oval",
+      "eyes": "round",
+      "hair": "long_dark",
+      "persona": "korean_thai",
+      "body": "hourglass"
+    },
+    "assumptions_to_confirm": [
+      "eye_color dark brown (chat did not specify)",
+      "height_cm 160 and weight_kg 50 are design notes only; image models cannot enforce them, so the prompt uses descriptive terms instead",
+      "age appearance adult 25-29 (age_virtual 27)"
+    ],
+    "profile": {
+      "ethnicity_look": "Thai",
+      "height_cm": 160,
+      "weight_kg": 50,
+      "skin_tone": "warm golden honey",
+      "undertone": "yellow-golden"
+    },
+    "palette_hex": {
+      "ivory": "#F2EBDD",
+      "sand": "#D8C7AE",
+      "taupe": "#A58B70",
+      "mocha": "#654735",
+      "espresso": "#292522",
+      "black": "#171717",
+      "muted_gold": "#B49A65",
+      "warm_nude": "#C9B7A5"
+    },
+    "palette_usage": "70% neutral (ivory, sand, taupe) / 20% deep neutral (mocha, espresso, black) / 10% accent (muted gold)",
+    "fashion_archetypes": {
+      "minimalist": "ivory shirt, tailored trousers, loafers",
+      "modern_executive": "blazer, straight trousers, structured bag",
+      "soft_elegant": "knit top, midi skirt, gold jewelry",
+      "evening_muse": "simple black dress, few accessories"
+    },
+    "production_rules": {
+      "lighting": "soft natural daylight",
+      "background": "beige / cream / warm minimalist interior",
+      "camera": "fashion editorial, 50mm look",
+      "composition": "full-body primarily",
+      "grading": "warm neutral",
+      "makeup": "natural warm makeup",
+      "accessories": "minimal gold jewelry",
+      "expression": "calm, confident, approachable",
+      "pose": "relaxed, elegant, natural"
+    },
+    "avoid": [
+      "saturated or loud backdrops",
+      "harsh flash",
+      "large brand logos",
+      "excessive accessories",
+      "cheap-ad poses",
+      "western-model look",
+      "overly sexy styling"
+    ],
+    "fixed": [
+      "facial_identity",
+      "skin_tone",
+      "body_proportions",
+      "signature_hairstyle",
+      "visual_identity"
+    ],
+    "variable": [
+      "clothing",
+      "accessories",
+      "poses",
+      "locations",
+      "camera_angles"
+    ],
+    "pipeline_notes": [
+      "Next: generate Master Face + Character Reference Sheet, lock them, then build a synthetic dataset for a LoRA (no real-person photos)",
+      "Set lora.path and lora.trigger_word only after a LoRA is trained and chosen",
+      "Disclose AI-generated imagery per platform rules (e.g. Shopee/Meta) before publishing"
+    ]
+  }
+}
