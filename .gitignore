@@ -46,3 +46,4 @@ datasets/**
 
 # Instagram session cookies (secret)
 ig_cookies.json
+!datasets/**/manifest.csv

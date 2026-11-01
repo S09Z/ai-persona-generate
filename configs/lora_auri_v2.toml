@@ -17,11 +17,11 @@ min_bucket_reso        = 512
 max_bucket_reso        = 1024
 bucket_reso_steps      = 64
 bucket_no_upscale      = false
-train_data_dir = "datasets/lora/auri_v1"
+train_data_dir = "datasets/lora/auri_v1_snapshot_20261101"
 
 [datasets]
 [[datasets.subsets]]
-image_dir         = "datasets/lora/auri_v1/5_auri_v1"
+image_dir         = "datasets/lora/auri_v1_snapshot_20261101/5_auri_v1"
 caption_extension = ".txt"
 num_repeats       = 5
 
