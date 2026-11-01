@@ -24,6 +24,7 @@ dependencies = [
     "instaloader>=4.15.1",
     "kornia>=0.7.1",
     "omegaconf>=2.3.0",
+    "peft>=0.13.0",
     "pillow>=12.1.1",
     "playwright>=1.58.0",
     "psutil>=7.2.2",
@@ -58,13 +59,13 @@ package = true
 index-strategy = "unsafe-best-match"
 
 override-dependencies = [
-  "torch==2.5.1+cu121",
-  "torchvision==0.20.1+cu121",
-  "torchaudio==2.5.1+cu121",
+  "torch==2.7.1+cu128",
+  "torchvision==0.22.1+cu128",
+  "torchaudio==2.7.1+cu128",
 ]
 
 [[tool.uv.index]]
-url = "https://download.pytorch.org/whl/cu121"
+url = "https://download.pytorch.org/whl/cu128"
 default = false
 
 [tool.uv.workspace]
