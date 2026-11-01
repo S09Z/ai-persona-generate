@@ -236,14 +236,22 @@ def build_command(config_path: Path, device: str, extra_args: list[str]) -> list
         str(train_cfg.get("lr_scheduler_num_cycles", 3)),
         "--gradient_accumulation_steps",
         str(train_cfg.get("gradient_accumulation_steps", 4)),
-        "--clip_skip",
-        str(train_cfg.get("clip_skip", 2)),
         "--seed",
         str(train_cfg.get("seed", 42)),
     ]
 
-    if train_cfg.get("gradient_checkpointing"):
-        cmd += ["--gradient_checkpointing"]
+    # SDXL does not use clip_skip by default; only pass it when explicitly set
+    if "clip_skip" in train_cfg:
+        cmd += ["--clip_skip", str(train_cfg["clip_skip"])]
+
+    # kohya uses naive attention unless one of these is requested
+    for flag in ("gradient_checkpointing", "sdpa", "full_bf16", "cache_latents", "cache_latents_to_disk", "no_half_vae"):
+        if train_cfg.get(flag):
+            cmd += [f"--{flag}"]
+    if train_cfg.get("optimizer_args"):
+        cmd += ["--optimizer_args", *map(str, train_cfg["optimizer_args"])]
+    if train_cfg.get("max_grad_norm") is not None:
+        cmd += ["--max_grad_norm", str(train_cfg["max_grad_norm"])]
 
     # ── LoRA network ──────────────────────────────────────────────────────────
     cmd += [
@@ -256,6 +264,10 @@ def build_command(config_path: Path, device: str, extra_args: list[str]) -> list
     ]
     if lora_cfg.get("network_train_unet_only"):
         cmd += ["--network_train_unet_only"]
+    # regularization knobs (one per experiment, e.g. EXP-007 network_dropout)
+    for key in ("network_dropout", "rank_dropout", "module_dropout"):
+        if lora_cfg.get(key):
+            cmd += [f"--{key}", str(lora_cfg[key])]
 
     # ── captions ─────────────────────────────────────────────────────────────
     if caption_cfg.get("shuffle_caption"):
@@ -266,6 +278,11 @@ def build_command(config_path: Path, device: str, extra_args: list[str]) -> list
         "--caption_dropout_rate",
         str(caption_cfg.get("caption_dropout_rate", 0.05)),
     ]
+    if caption_cfg.get("caption_dropout_every_n_epochs"):
+        cmd += [
+            "--caption_dropout_every_n_epochs",
+            str(caption_cfg["caption_dropout_every_n_epochs"]),
+        ]
 
     # ── logging ──────────────────────────────────────────────────────────────
     if logging_cfg.get("log_with"):
