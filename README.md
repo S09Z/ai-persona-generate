@@ -183,8 +183,8 @@ uv run tensorboard --logdir logs/lora_auri --port 6006
 ```
 models/loras/
 ├── auri_v1.safetensors           ← final (epoch 12)
-├── auri_v1-epoch-02.safetensors  ← saved every 2 epochs
-├── auri_v1-epoch-04.safetensors
+├── auri_v1-000002.safetensors  ← saved every 2 epochs
+├── auri_v1-000004.safetensors
 └── ...
 
 logs/lora_auri/samples/           ← preview images every 2 epochs

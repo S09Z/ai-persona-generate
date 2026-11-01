@@ -43,3 +43,6 @@ datasets/**
 !datasets/**/
 !datasets/**/*.txt
 
+
+# Instagram session cookies (secret)
+ig_cookies.json

@@ -45,7 +45,13 @@ HEIGHT = int(os.getenv("HEIGHT", "1216"))
 
 
 # ── diffusers backend ─────────────────────────────────────────────────────────
-def run_diffusers(post: dict, output_path: Path, seed: int | None) -> None:
+def run_diffusers(
+    post: dict,
+    output_path: Path,
+    seed: int | None,
+    lora_path: str = "",
+    lora_weight: float = 1.0,
+) -> None:
     from idol_generate.pipeline import generate_image
 
     result = generate_image(
@@ -59,6 +65,8 @@ def run_diffusers(post: dict, output_path: Path, seed: int | None) -> None:
         width=WIDTH,
         height=HEIGHT,
         seed=seed,
+        lora_path=lora_path,
+        lora_weight=lora_weight,
     )
     console.log(f"[green]Image saved →[/] {result}")
 
@@ -132,6 +140,15 @@ def main() -> None:
         default="./workflows/luna_portrait.json",
         help="ComfyUI workflow JSON path (used with --comfyui)",
     )
+    parser.add_argument(
+        "--lora-weight",
+        type=float,
+        default=None,
+        help="Override the character's LoRA weight (e.g. 0.6, 0.8, 1.0, 1.2)",
+    )
+    parser.add_argument(
+        "--no-lora", action="store_true", help="Generate with the base model only"
+    )
     args = parser.parse_args()
 
     char_path = CHAR_DIR / f"{args.character}.json"
@@ -141,6 +158,8 @@ def main() -> None:
 
     character = Character.load(char_path)
     post = build_post(character, args.content_type)  # type: ignore[arg-type]
+    lora_path = character.lora.path
+    lora_weight = args.lora_weight if args.lora_weight is not None else character.lora.weight
 
     console.print(
         Panel(
@@ -177,7 +196,13 @@ def main() -> None:
         if args.comfyui:
             run_comfyui(post, img_path, args.workflow, seed)
         else:
-            run_diffusers(post, img_path, seed)
+            run_diffusers(
+                post,
+                img_path,
+                seed,
+                lora_path=lora_path if not args.no_lora else "",
+                lora_weight=lora_weight,
+            )
 
 
 if __name__ == "__main__":

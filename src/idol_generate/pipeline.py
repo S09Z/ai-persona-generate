@@ -33,7 +33,13 @@ def set_seed(seed: int, device: str = "mps") -> None:
         torch.cuda.manual_seed_all(seed)
 
 
-def load_pipeline(model_id: str, model_path: str, device: str) -> object:
+def load_pipeline(
+    model_id: str,
+    model_path: str,
+    device: str,
+    lora_path: str = "",
+    lora_weight: float = 1.0,
+) -> object:
     """
     Load StableDiffusionXLPipeline from local .safetensors or HF Hub.
     Uses bfloat16 on MPS — safe (no black-image NaN) and ~2-3x faster than float32.
@@ -56,12 +62,21 @@ def load_pipeline(model_id: str, model_path: str, device: str) -> object:
     pipe.scheduler = DPMSolverMultistepScheduler.from_config(
         pipe.scheduler.config, use_karras_sigmas=True
     )
+    if lora_path:
+        lora_file = Path(lora_path)
+        if not lora_file.exists():
+            raise FileNotFoundError(f"LoRA not found: {lora_file}")
+        pipe.load_lora_weights(
+            str(lora_file.parent), weight_name=lora_file.name, adapter_name="character"
+        )
+        pipe.set_adapters(["character"], adapter_weights=[lora_weight])
+
     pipe = pipe.to(device)
 
     if device == "mps":
         pipe.enable_attention_slicing(1)
-    elif device == "cuda":
-        pipe.enable_xformers_memory_efficient_attention()
+    # elif device == "cuda":
+        # pipe.enable_xformers_memory_efficient_attention()
 
     return pipe
 
@@ -77,6 +92,8 @@ def generate_image(
     width: int,
     height: int,
     seed: int | None = None,
+    lora_path: str = "",
+    lora_weight: float = 1.0,
 ) -> Path:
     """Load pipeline, run generation, save output, free device memory."""
     import torch
@@ -86,7 +103,7 @@ def generate_image(
     if seed is not None:
         set_seed(seed, device)
 
-    pipe = load_pipeline(model_id, model_path, device)
+    pipe = load_pipeline(model_id, model_path, device, lora_path, lora_weight)
 
     result = pipe(
         prompt=post["prompt"],

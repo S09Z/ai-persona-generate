@@ -286,7 +286,10 @@ def build_command(config_path: Path, device: str, extra_args: list[str]) -> list
             sample_cfg.get("sample_sampler", "euler_a"),
         ]
         prompts = sample_cfg.get("sample_prompts", [])
-        if prompts:
+        if isinstance(prompts, str):
+            # already a prompt file path
+            cmd += ["--sample_prompts", prompts]
+        elif prompts:
             # kohya expects prompts as a file
             prompt_file = Path("configs") / "_sample_prompts.txt"
             prompt_file.write_text("\n".join(prompts), encoding="utf-8")

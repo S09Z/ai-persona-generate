@@ -28,7 +28,6 @@
     "eye_color": "light sky blue",
     "hair": "short neck-length hair, light amber brown color, soft natural texture",
     "body_type": "curvy fit, slightly soft but toned, subtle muscle definition, hourglass figure, tall",
-    "height": "175 cm",
     "signature_features": "bright expressive eyes, warm smile, elegant posture, natural beauty"
   },
   "visual_style": {
@@ -76,7 +75,7 @@
     "going to white sand beaches"
   ],
   "lora": {
-    "path": "models/loras/auri_v1.safetensors",
+    "path": "models/loras/auri_v1-000004.safetensors",
     "trigger_word": "auri_v1",
     "weight": 0.8
   },
