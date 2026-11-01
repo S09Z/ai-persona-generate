@@ -1,0 +1,23 @@
+# Fixed evaluation prompt sets. Do not edit a set between runs of one experiment.
+# Trigger token is auri_v1 (kept identical across the whole series).
+
+[viewpoint]   # EXP-005: does viewpoint diversity help identity at other angles?
+seeds = [42, 123, 777, 2026]
+[viewpoint.prompts]
+A_frontal = "photo of auri_v1, close-up portrait, looking directly at camera, neutral expression, soft natural daylight, realistic skin texture"
+B_three_quarter = "photo of auri_v1, three-quarter view, head turned slightly to the side, natural expression, outdoor daylight, realistic portrait photography"
+C_side_profile = "photo of auri_v1, side profile portrait, looking toward the horizon, soft overcast daylight, realistic skin texture, photographic detail"
+
+[weight]      # EXP-006: LoRA weight sweep (no retraining)
+seeds = [42, 123, 777]
+[weight.prompts]
+A_frontal = "photo of auri_v1, close-up portrait, looking directly at camera, neutral expression, natural daylight, realistic skin texture, photographic detail"
+B_expression = "photo of auri_v1, three-quarter view, smiling naturally, soft window light, casual clothing, realistic portrait photography"
+C_context = "photo of auri_v1, medium shot, standing outdoors, wearing a dark jacket, overcast daylight, candid photography"
+
+[dropout]     # EXP-007: network dropout 0.00 vs 0.10
+seeds = [42, 123, 777]
+[dropout.prompts]
+A_identity = "photo of auri_v1, close-up portrait, looking directly at camera, neutral expression, soft natural daylight, realistic skin texture"
+B_expression = "photo of auri_v1, three-quarter view, smiling naturally, soft window light, casual clothing, realistic portrait photography"
+C_context = "photo of auri_v1, medium shot, standing outdoors, wearing a dark jacket, overcast daylight, candid photography"
