@@ -18,6 +18,10 @@ from pathlib import Path
 
 # Must run before any HF/diffusers import
 os.environ.setdefault("HF_HUB_DISABLE_SYMLINKS_WARNING", "1")
+# Windows consoles default to cp1252 and choke on emoji in captions
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        _stream.reconfigure(encoding="utf-8", errors="replace")
 sys.path.insert(0, str(Path(__file__).parent / "src"))
 
 from dotenv import load_dotenv

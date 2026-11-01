@@ -75,6 +75,10 @@ def load_pipeline(
 
     if device == "mps":
         pipe.enable_attention_slicing(1)
+    else:
+        # 12 GB cards: keep the VAE decode from spilling into shared memory
+        pipe.enable_vae_slicing()
+        pipe.enable_vae_tiling()
     # elif device == "cuda":
         # pipe.enable_xformers_memory_efficient_attention()
 
