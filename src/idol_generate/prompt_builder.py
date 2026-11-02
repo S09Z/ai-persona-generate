@@ -15,6 +15,7 @@ from .character import Character
 ContentType = Literal[
     "daily_life", "fashion", "selfie", "story",
     "minimalist", "modern_executive", "soft_elegant", "evening_muse", "athleisure",
+    "casual_cool", "tomboy_chic",
 ]
 
 # Each SDXL text encoder reads at most 77 tokens (2 are BOS/EOS); anything past that is dropped.
@@ -168,6 +169,40 @@ CONTENT_CONFIGS: dict[str, dict] = {
         "caption_hooks": [
             "one black dress, nothing more {hook}",
             "evening, simplified {hook}",
+        ],
+    },
+    "casual_cool": {
+        "outfit": "oversized white tee, relaxed straight jeans, clean white sneakers",
+        "poses": [
+            "standing relaxed, hands in jeans pockets, easy half-smile",
+            "leaning on a wall, one knee bent, looking off-camera",
+            "walking mid-stride, glancing back over one shoulder",
+        ],
+        "environments": [
+            "sunlit cafe terrace, warm tones",
+            "quiet city street, soft daylight",
+        ],
+        "mood_tags": ["chill", "cool", "easygoing", "natural"],
+        "caption_hooks": [
+            "tee, jeans, done {hook}",
+            "no plan, just good light {hook}",
+        ],
+    },
+    "tomboy_chic": {
+        "outfit": "cap, loose zip jacket, wide trousers, chunky sneakers, thin gold necklace",
+        "poses": [
+            "standing with hands in jacket pockets, cool relaxed look",
+            "sitting on steps, elbows on knees, direct calm gaze",
+            "adjusting her cap, easy half-smile",
+        ],
+        "environments": [
+            "quiet street with warm concrete walls",
+            "park path in soft daylight",
+        ],
+        "mood_tags": ["cool", "relaxed", "effortless", "confident"],
+        "caption_hooks": [
+            "cap on, thinking off {hook}",
+            "comfy first, pretty second, somehow both {hook}",
         ],
     },
     "athleisure": {

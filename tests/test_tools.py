@@ -74,7 +74,7 @@ def test_character_loader_ignores_extra_top_level_keys(tmp_path):
     data["something_new"] = {"a": 1}
     path = tmp_path / "c.json"
     path.write_text(json.dumps(data), encoding="utf-8")
-    assert Character.load(path).name == "MODEL_001"
+    assert Character.load(path).name == "Namphueng"
 
 
 def test_character_loader_rejects_unknown_appearance_field(tmp_path):
