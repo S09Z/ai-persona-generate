@@ -30,7 +30,7 @@ from rich.panel import Panel
 from rich.pretty import Pretty
 
 from idol_generate.character import Character
-from idol_generate.prompt_builder import build_post
+from idol_generate.prompt_builder import CONTENT_CONFIGS, build_post
 
 load_dotenv()
 console = Console()
@@ -118,7 +118,7 @@ def main() -> None:
         "--type",
         "-t",
         dest="content_type",
-        choices=["daily_life", "fashion", "selfie", "story"],
+        choices=list(CONTENT_CONFIGS),
         default="daily_life",
     )
     parser.add_argument(

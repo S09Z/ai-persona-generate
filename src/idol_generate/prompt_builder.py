@@ -6,11 +6,19 @@ Builds Stable Diffusion prompts and captions from a Character + content type.
 from __future__ import annotations
 
 import random
+import re
+from functools import lru_cache
 from typing import Literal
 
 from .character import Character
 
-ContentType = Literal["daily_life", "fashion", "selfie", "story"]
+ContentType = Literal[
+    "daily_life", "fashion", "selfie", "story",
+    "minimalist", "modern_executive", "soft_elegant", "evening_muse", "athleisure",
+]
+
+# Each SDXL text encoder reads at most 77 tokens (2 are BOS/EOS); anything past that is dropped.
+CLIP_TOKEN_BUDGET = 75
 
 CONTENT_CONFIGS: dict[str, dict] = {
     "daily_life": {
@@ -93,6 +101,92 @@ CONTENT_CONFIGS: dict[str, dict] = {
             "the city felt smaller that night {hook}",
         ],
     },
+    # Quiet-luxury archetypes (MODEL_001); palette and backdrop rules come from the character
+    "minimalist": {
+        "outfit": "ivory shirt, tailored sand trousers, loafers",
+        "poses": [
+            "standing relaxed, one hand in pocket, slight side angle",
+            "walking slowly, head turned a little toward camera",
+            "leaning on a plain cream wall, arms loosely crossed",
+        ],
+        "environments": [
+            "warm minimalist interior, cream walls",
+            "beige studio backdrop, soft diffused light",
+        ],
+        "mood_tags": ["understated", "calm", "refined", "effortless"],
+        "caption_hooks": [
+            "less, but better {hook}",
+            "quiet outfit, quiet confidence {hook}",
+        ],
+    },
+    "modern_executive": {
+        "outfit": "taupe tailored blazer, straight espresso trousers, structured bag",
+        "poses": [
+            "standing tall, one hand holding the bag, calm gaze",
+            "walking past a glass door, relaxed stride",
+            "sitting on a low bench, legs crossed, bag on lap",
+        ],
+        "environments": [
+            "modern beige office lobby, soft daylight",
+            "cream studio backdrop, soft diffused light",
+        ],
+        "mood_tags": ["polished", "confident", "refined", "composed"],
+        "caption_hooks": [
+            "workwear that works as hard as I do {hook}",
+            "tailored and calm {hook}",
+        ],
+    },
+    "soft_elegant": {
+        "outfit": "soft knit top, mocha midi skirt, thin gold jewelry",
+        "poses": [
+            "standing with a gentle smile, hands relaxed",
+            "turning softly, skirt moving slightly",
+            "sitting by a window, hands in lap",
+        ],
+        "environments": [
+            "warm minimalist living room, sand tones",
+            "sunlit beige interior, sheer curtains",
+        ],
+        "mood_tags": ["soft", "warm", "graceful", "approachable"],
+        "caption_hooks": [
+            "soft textures, warm tones {hook}",
+            "gold in the details {hook}",
+        ],
+    },
+    "evening_muse": {
+        "outfit": "simple black dress, small gold earrings",
+        "poses": [
+            "standing straight, chin slightly lifted, calm gaze",
+            "glancing over one shoulder",
+            "sitting on a velvet chair, ankles crossed",
+        ],
+        "environments": [
+            "dim warm lounge, soft amber light",
+            "cream backdrop with soft side light",
+        ],
+        "mood_tags": ["elegant", "poised", "quiet", "luminous"],
+        "caption_hooks": [
+            "one black dress, nothing more {hook}",
+            "evening, simplified {hook}",
+        ],
+    },
+    "athleisure": {
+        "outfit": "fitted sand sports bra, high-waist taupe leggings",
+        "poses": [
+            "standing relaxed, hands at hips, slight side angle",
+            "stretching arms overhead, calm expression",
+            "walking, towel over one shoulder",
+        ],
+        "environments": [
+            "clean beige studio, soft daylight",
+            "warm minimalist gym, large window light",
+        ],
+        "mood_tags": ["fresh", "healthy", "confident", "natural"],
+        "caption_hooks": [
+            "moving, then matcha {hook}",
+            "strong and soft at once {hook}",
+        ],
+    },
 }
 
 ENGAGEMENT_HOOKS = [
@@ -126,6 +220,9 @@ QUALITY_TAGS_CLIP_G = (
     "sharp focus, intricate details"
 )
 
+# The tags that matter most; kept short so they still fit after the scene and style
+QUALITY_CORE = "RAW photo, photorealistic, sharp focus"
+
 # Content-type to clean hashtag mapping
 _CONTENT_TAG_MAP: dict[str, str] = {
     "daily_life": "DailyLife",
@@ -135,31 +232,85 @@ _CONTENT_TAG_MAP: dict[str, str] = {
 }
 
 
-def build_image_prompt(character: Character, content_type: ContentType) -> tuple[str, str, str]:
-    """Returns (prompt, prompt_2, negative_prompt) — SDXL dual-CLIP split."""
+@lru_cache(maxsize=1)
+def _clip_tokenizer():
+    """CLIP-L tokenizer from the local HF cache, or None when it is not available offline."""
+    try:
+        from transformers import CLIPTokenizer
+
+        return CLIPTokenizer.from_pretrained("openai/clip-vit-large-patch14", local_files_only=True)
+    except Exception:
+        return None
+
+
+def count_tokens(text: str) -> int:
+    """CLIP token count without BOS/EOS; falls back to a rough estimate if no tokenizer is cached."""
+    tok = _clip_tokenizer()
+    if tok is not None:
+        return len(tok(text).input_ids) - 2
+    return round(len(re.findall(r"\w+|[^\w\s]", text)) * 1.3)
+
+
+def _phrases(text: str, n: int) -> str:
+    """First n comma-separated phrases of a free-text field."""
+    return ", ".join(p.strip() for p in text.split(",")[:n] if p.strip())
+
+
+def _pack(parts: list[str], budget: int = CLIP_TOKEN_BUDGET) -> str:
+    """Join parts in priority order, skipping any that would push past the token budget."""
+    kept: list[str] = []
+    used = 0
+    for part in parts:
+        if not part:
+            continue
+        cost = count_tokens(part) + 1  # +1 for the joining comma
+        if used + cost <= budget:
+            kept.append(part)
+            used += cost
+    return ", ".join(kept)
+
+
+def build_image_prompt(
+    character: Character, content_type: ContentType, mood: str | None = None
+) -> tuple[str, str, str]:
+    """Returns (prompt, prompt_2, negative_prompt) — SDXL dual-CLIP split.
+
+    Each encoder reads only 77 tokens, so both prompts are packed in priority order and
+    lower-priority details are dropped rather than silently truncated mid-phrase.
+    Pass `mood` to reuse a mood already drawn for the caption/metadata.
+    """
     cfg = CONTENT_CONFIGS[content_type]
     a = character.appearance
     v = character.visual_style
 
     pose = random.choice(cfg["poses"])
     env = random.choice(cfg["environments"])
-    mood = random.choice(cfg["mood_tags"])
+    mood = mood or random.choice(cfg["mood_tags"])
     palette = ", ".join(v.color_palette[:2])
+    trigger = character.lora.trigger_word  # empty if no LoRA configured
 
-    # LoRA trigger word prefix (empty if no LoRA configured)
-    trigger = f"{character.lora.trigger_word}, " if character.lora.trigger_word else ""
-
-    # CLIP-L (prompt): subject + scene — kept lean to stay under 77 tokens
-    prompt_1 = (
-        f"{trigger}"
-        f"{a.face}, {a.eye_color}, {a.hair}, {a.signature_features}, "
-        f"{a.body_type} figure, {pose}, "
-        f"{env}, {v.lighting}, "
-        f"{v.camera_settings}, "
-        f"{palette} color palette, {mood} mood"
-    )
-    # CLIP-G (prompt_2): quality/booster tags — SDXL's 2nd encoder handles long tags well
-    prompt_2 = f"{QUALITY_TAGS_CLIP_G}, {character.style}"
+    # CLIP-L (prompt): who she is; the outfit only if there is room left
+    prompt_1 = _pack([
+        trigger,
+        _phrases(a.face, 5),
+        _phrases(a.eye_color, 1),
+        _phrases(a.hair, 1),
+        _phrases(a.body_type, 3),
+        cfg.get("outfit", ""),
+    ])
+    # CLIP-G (prompt_2): what she wears and does, where, light and mood first; quality tags last
+    prompt_2 = _pack([
+        cfg.get("outfit", ""),
+        pose,
+        env,
+        v.lighting,
+        f"{mood} mood",
+        f"{palette} color palette",
+        _phrases(v.camera_settings, 2),
+        QUALITY_CORE,
+        character.style,
+        QUALITY_TAGS_CLIP_G,
+    ])
 
     return prompt_1, prompt_2, NEGATIVE_PROMPT
 
@@ -193,11 +344,11 @@ def build_tags(character: Character, content_type: ContentType) -> list[str]:
 
 
 def build_post(character: Character, content_type: ContentType) -> dict:
-    prompt, prompt_2, negative_prompt = build_image_prompt(character, content_type)
-    caption = build_caption(character, content_type)
-    tags = build_tags(character, content_type)
     # Single draw for mood so prompt and metadata stay consistent
     mood = random.choice(CONTENT_CONFIGS[content_type]["mood_tags"])
+    prompt, prompt_2, negative_prompt = build_image_prompt(character, content_type, mood)
+    caption = build_caption(character, content_type)
+    tags = build_tags(character, content_type)
     return {
         "prompt": prompt,
         "prompt_2": prompt_2,
