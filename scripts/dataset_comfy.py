@@ -54,6 +54,16 @@ LOOKS = [  # (outfit, kind) used for body shots
 ]
 HEAD_ANGLES = [(0, "front view"), (25, "three-quarter view"), (-25, "three-quarter view"),
                (40, "three-quarter view"), (-40, "three-quarter view")]
+LOOKS_WAIST = [  # round 2: outfits that show the waist-to-hip line
+    "fitted tank top tucked into high-waist jeans, sneakers",
+    "sand sports bra, taupe high-waist leggings, sneakers",
+    "ribbed fitted tee tucked into high-waist shorts, sneakers",
+    "ivory fitted shirt tucked into high-waist wide trousers, belt",
+    "mocha knit top, leggings, (baseball cap:1.3)",
+    "white fitted tee tucked into high-waist cargo trousers, belt",
+    "fitted black tank top, high-waist straight jeans, white sneakers",
+    "taupe sports bra, mocha high-waist leggings, (open zip jacket:1.2)",
+]
 EXPR = ["soft smile", "relaxed half-smile", "calm expression", "laughing"]
 BODY_ANGLES = [(0, "frontal", "standing front view, relaxed", "down"),
                (0, "frontal", "standing front view, hand on hip", "hand_on_hip"),
@@ -85,18 +95,39 @@ def body_jobs(n: int) -> list[dict]:
     return jobs
 
 
+def body_jobs_v2(n: int, first_idx: int) -> list[dict]:
+    """More hip-showing angles (three-quarter, side, back, hand on hip) in waist-defined outfits."""
+    angles = [a for a in BODY_ANGLES if a[1] != "frontal"] + [BODY_ANGLES[1]]
+    jobs = []
+    for i in range(n):
+        yaw, view, text, arms = angles[i % len(angles)]
+        outfit = LOOKS_WAIST[(i * 3 + i // len(angles)) % len(LOOKS_WAIST)]
+        prompt = f"{text}, {outfit}, {BODY_BASE}, {SCENES[(i * 7 + 2) % len(SCENES)]}"
+        jobs.append(dict(kind="body", view=view, prompt=prompt, yaw=yaw, seed=7000 + i,
+                         ip=0.2 if view == "back" else 0.6, size=(832, 1216), arms=arms,
+                         idx=first_idx + i))
+    return jobs
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default=str(ROOT / "characters/model_001/dataset"))
     ap.add_argument("--heads", type=int, default=18)
     ap.add_argument("--bodies", type=int, default=30)
+    ap.add_argument("--extra-bodies", type=int, default=0,
+                    help="round 2: only generate this many waist-defined full-body images (indexes continue after 48)")
     ap.add_argument("--steps", type=int, default=25)
     ap.add_argument("--cfg", type=float, default=6.0)
     ap.add_argument("--face-crop", default="80,20,944,884")
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
 
-    jobs = head_jobs(args.heads) + body_jobs(args.bodies)
+    if args.extra_bodies:
+        jobs = body_jobs_v2(args.extra_bodies, 48)
+    else:
+        jobs = head_jobs(args.heads) + body_jobs(args.bodies)
+        for i, j in enumerate(jobs):
+            j["idx"] = i
     too_long = [(j["prompt"], count_tokens(j["prompt"])) for j in jobs if count_tokens(j["prompt"]) > 75]
     for p, n in too_long:
         print(f"TOO LONG ({n}): {p}")
@@ -117,8 +148,8 @@ def main() -> None:
 
     manifest_path = out / "manifest.json"
     manifest = json.loads(manifest_path.read_text(encoding="utf-8")) if manifest_path.exists() else {}
-    for i, j in enumerate(jobs):
-        name = f"{j['kind']}_{i:03d}_{j['view']}"
+    for j in jobs:
+        name = f"{j['kind']}_{j['idx']:03d}_{j['view']}"
         if (out / f"{name}.png").exists():
             continue  # resume after an interruption
         w, h = j["size"]

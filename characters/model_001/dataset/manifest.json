@@ -182,7 +182,8 @@
     "seed": 6000,
     "yaw": 0,
     "ip_weight": 0.6,
-    "split": "train"
+    "split": "excluded",
+    "excluded_reason": "round-1 skeleton had over-long legs"
   },
   "body_019_frontal": {
     "kind": "body",
@@ -200,7 +201,8 @@
     "seed": 6002,
     "yaw": 35,
     "ip_weight": 0.6,
-    "split": "train"
+    "split": "excluded",
+    "excluded_reason": "round-1 skeleton had over-long legs"
   },
   "body_021_three_quarter": {
     "kind": "body",
@@ -209,7 +211,8 @@
     "seed": 6003,
     "yaw": -35,
     "ip_weight": 0.6,
-    "split": "train"
+    "split": "excluded",
+    "excluded_reason": "round-1 skeleton had over-long legs"
   },
   "body_022_side": {
     "kind": "body",
@@ -236,7 +239,8 @@
     "seed": 6006,
     "yaw": 0,
     "ip_weight": 0.6,
-    "split": "train"
+    "split": "excluded",
+    "excluded_reason": "round-1 skeleton had over-long legs"
   },
   "body_025_frontal": {
     "kind": "body",
@@ -245,7 +249,8 @@
     "seed": 6007,
     "yaw": 0,
     "ip_weight": 0.6,
-    "split": "train"
+    "split": "excluded",
+    "excluded_reason": "round-1 skeleton had over-long legs"
   },
   "body_026_three_quarter": {
     "kind": "body",
@@ -254,7 +259,8 @@
     "seed": 6008,
     "yaw": 35,
     "ip_weight": 0.6,
-    "split": "train"
+    "split": "excluded",
+    "excluded_reason": "round-1 skeleton had over-long legs"
   },
   "body_027_three_quarter": {
     "kind": "body",
@@ -273,7 +279,8 @@
     "seed": 6010,
     "yaw": 80,
     "ip_weight": 0.6,
-    "split": "train"
+    "split": "excluded",
+    "excluded_reason": "round-1 skeleton had over-long legs"
   },
   "body_029_back": {
     "kind": "body",
@@ -292,7 +299,8 @@
     "seed": 6012,
     "yaw": 0,
     "ip_weight": 0.6,
-    "split": "train"
+    "split": "excluded",
+    "excluded_reason": "round-1 skeleton had over-long legs"
   },
   "body_031_frontal": {
     "kind": "body",
@@ -301,7 +309,8 @@
     "seed": 6013,
     "yaw": 0,
     "ip_weight": 0.6,
-    "split": "train"
+    "split": "excluded",
+    "excluded_reason": "round-1 skeleton had over-long legs"
   },
   "body_032_three_quarter": {
     "kind": "body",
@@ -310,7 +319,8 @@
     "seed": 6014,
     "yaw": 35,
     "ip_weight": 0.6,
-    "split": "train"
+    "split": "excluded",
+    "excluded_reason": "round-1 skeleton had over-long legs"
   },
   "body_033_three_quarter": {
     "kind": "body",
@@ -328,7 +338,8 @@
     "seed": 6016,
     "yaw": 80,
     "ip_weight": 0.6,
-    "split": "train"
+    "split": "excluded",
+    "excluded_reason": "round-1 skeleton had over-long legs"
   },
   "body_035_back": {
     "kind": "body",
@@ -337,7 +348,8 @@
     "seed": 6017,
     "yaw": 180,
     "ip_weight": 0.2,
-    "split": "train"
+    "split": "excluded",
+    "excluded_reason": "round-1 skeleton had over-long legs"
   },
   "body_036_frontal": {
     "kind": "body",
@@ -346,7 +358,8 @@
     "seed": 6018,
     "yaw": 0,
     "ip_weight": 0.6,
-    "split": "train"
+    "split": "excluded",
+    "excluded_reason": "round-1 skeleton had over-long legs"
   },
   "body_037_frontal": {
     "kind": "body",
@@ -355,7 +368,8 @@
     "seed": 6019,
     "yaw": 0,
     "ip_weight": 0.6,
-    "split": "train"
+    "split": "excluded",
+    "excluded_reason": "round-1 skeleton had over-long legs"
   },
   "body_038_three_quarter": {
     "kind": "body",
@@ -364,7 +378,8 @@
     "seed": 6020,
     "yaw": 35,
     "ip_weight": 0.6,
-    "split": "train"
+    "split": "excluded",
+    "excluded_reason": "round-1 skeleton had over-long legs"
   },
   "body_039_three_quarter": {
     "kind": "body",
@@ -383,7 +398,8 @@
     "seed": 6022,
     "yaw": 80,
     "ip_weight": 0.6,
-    "split": "train"
+    "split": "excluded",
+    "excluded_reason": "round-1 skeleton had over-long legs"
   },
   "body_041_back": {
     "kind": "body",
@@ -392,7 +408,8 @@
     "seed": 6023,
     "yaw": 180,
     "ip_weight": 0.2,
-    "split": "train"
+    "split": "excluded",
+    "excluded_reason": "round-1 skeleton had over-long legs"
   },
   "body_042_frontal": {
     "kind": "body",
@@ -401,7 +418,8 @@
     "seed": 6024,
     "yaw": 0,
     "ip_weight": 0.6,
-    "split": "train"
+    "split": "excluded",
+    "excluded_reason": "round-1 skeleton had over-long legs"
   },
   "body_043_frontal": {
     "kind": "body",
@@ -410,7 +428,8 @@
     "seed": 6025,
     "yaw": 0,
     "ip_weight": 0.6,
-    "split": "train"
+    "split": "excluded",
+    "excluded_reason": "round-1 skeleton had over-long legs"
   },
   "body_044_three_quarter": {
     "kind": "body",
@@ -428,7 +447,8 @@
     "seed": 6027,
     "yaw": -35,
     "ip_weight": 0.6,
-    "split": "train"
+    "split": "excluded",
+    "excluded_reason": "round-1 skeleton had over-long legs"
   },
   "body_046_side": {
     "kind": "body",
@@ -448,5 +468,334 @@
     "ip_weight": 0.2,
     "split": "excluded",
     "excluded_reason": "bare feet"
+  },
+  "body_048_three_quarter": {
+    "kind": "body",
+    "view": "three_quarter",
+    "prompt": "three-quarter view, standing, fitted tank top tucked into high-waist jeans, sneakers, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, quiet street, morning sun",
+    "seed": 7000,
+    "yaw": 35,
+    "ip_weight": 0.6,
+    "split": "train"
+  },
+  "body_049_three_quarter": {
+    "kind": "body",
+    "view": "three_quarter",
+    "prompt": "three-quarter view, hand on hip, ivory fitted shirt tucked into high-waist wide trousers, belt, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, park path with trees, daylight",
+    "seed": 7001,
+    "yaw": -35,
+    "ip_weight": 0.6,
+    "split": "train"
+  },
+  "body_050_side": {
+    "kind": "body",
+    "view": "side",
+    "prompt": "side view, standing, fitted black tank top, high-waist straight jeans, white sneakers, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, bright white studio",
+    "seed": 7002,
+    "yaw": 80,
+    "ip_weight": 0.6,
+    "split": "train"
+  },
+  "body_051_back": {
+    "kind": "body",
+    "view": "back",
+    "prompt": "back view, seen from behind, sand sports bra, taupe high-waist leggings, sneakers, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, warm minimal living room",
+    "seed": 7003,
+    "yaw": 180,
+    "ip_weight": 0.2,
+    "split": "excluded",
+    "excluded_reason": "bed in scene"
+  },
+  "body_052_frontal": {
+    "kind": "body",
+    "view": "frontal",
+    "prompt": "standing front view, hand on hip, mocha knit top, leggings, (baseball cap:1.3), full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, plain beige wall, soft daylight",
+    "seed": 7004,
+    "yaw": 0,
+    "ip_weight": 0.6,
+    "split": "train"
+  },
+  "body_053_three_quarter": {
+    "kind": "body",
+    "view": "three_quarter",
+    "prompt": "three-quarter view, standing, fitted tank top tucked into high-waist jeans, sneakers, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, cafe interior, warm window light",
+    "seed": 7005,
+    "yaw": 35,
+    "ip_weight": 0.6,
+    "split": "train"
+  },
+  "body_054_three_quarter": {
+    "kind": "body",
+    "view": "three_quarter",
+    "prompt": "three-quarter view, hand on hip, ivory fitted shirt tucked into high-waist wide trousers, belt, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, quiet street, morning sun",
+    "seed": 7006,
+    "yaw": -35,
+    "ip_weight": 0.6,
+    "split": "train"
+  },
+  "body_055_side": {
+    "kind": "body",
+    "view": "side",
+    "prompt": "side view, standing, fitted black tank top, high-waist straight jeans, white sneakers, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, park path with trees, daylight",
+    "seed": 7007,
+    "yaw": 80,
+    "ip_weight": 0.6,
+    "split": "train"
+  },
+  "body_056_back": {
+    "kind": "body",
+    "view": "back",
+    "prompt": "back view, seen from behind, sand sports bra, taupe high-waist leggings, sneakers, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, bright white studio",
+    "seed": 7008,
+    "yaw": 180,
+    "ip_weight": 0.2,
+    "split": "train"
+  },
+  "body_057_frontal": {
+    "kind": "body",
+    "view": "frontal",
+    "prompt": "standing front view, hand on hip, mocha knit top, leggings, (baseball cap:1.3), full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, warm minimal living room",
+    "seed": 7009,
+    "yaw": 0,
+    "ip_weight": 0.6,
+    "split": "train"
+  },
+  "body_058_three_quarter": {
+    "kind": "body",
+    "view": "three_quarter",
+    "prompt": "three-quarter view, standing, fitted tank top tucked into high-waist jeans, sneakers, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, plain beige wall, soft daylight",
+    "seed": 7010,
+    "yaw": 35,
+    "ip_weight": 0.6,
+    "split": "train"
+  },
+  "body_059_three_quarter": {
+    "kind": "body",
+    "view": "three_quarter",
+    "prompt": "three-quarter view, hand on hip, ivory fitted shirt tucked into high-waist wide trousers, belt, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, cafe interior, warm window light",
+    "seed": 7011,
+    "yaw": -35,
+    "ip_weight": 0.6,
+    "split": "holdout"
+  },
+  "body_060_side": {
+    "kind": "body",
+    "view": "side",
+    "prompt": "side view, standing, fitted black tank top, high-waist straight jeans, white sneakers, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, quiet street, morning sun",
+    "seed": 7012,
+    "yaw": 80,
+    "ip_weight": 0.6,
+    "split": "train"
+  },
+  "body_061_back": {
+    "kind": "body",
+    "view": "back",
+    "prompt": "back view, seen from behind, sand sports bra, taupe high-waist leggings, sneakers, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, park path with trees, daylight",
+    "seed": 7013,
+    "yaw": 180,
+    "ip_weight": 0.2,
+    "split": "train"
+  },
+  "body_062_frontal": {
+    "kind": "body",
+    "view": "frontal",
+    "prompt": "standing front view, hand on hip, mocha knit top, leggings, (baseball cap:1.3), full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, bright white studio",
+    "seed": 7014,
+    "yaw": 0,
+    "ip_weight": 0.6,
+    "split": "train"
+  },
+  "body_063_three_quarter": {
+    "kind": "body",
+    "view": "three_quarter",
+    "prompt": "three-quarter view, standing, fitted tank top tucked into high-waist jeans, sneakers, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, warm minimal living room",
+    "seed": 7015,
+    "yaw": 35,
+    "ip_weight": 0.6,
+    "split": "excluded",
+    "excluded_reason": "cropped top / midriff"
+  },
+  "body_064_three_quarter": {
+    "kind": "body",
+    "view": "three_quarter",
+    "prompt": "three-quarter view, hand on hip, ivory fitted shirt tucked into high-waist wide trousers, belt, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, plain beige wall, soft daylight",
+    "seed": 7016,
+    "yaw": -35,
+    "ip_weight": 0.6,
+    "split": "train"
+  },
+  "body_065_side": {
+    "kind": "body",
+    "view": "side",
+    "prompt": "side view, standing, fitted black tank top, high-waist straight jeans, white sneakers, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, cafe interior, warm window light",
+    "seed": 7017,
+    "yaw": 80,
+    "ip_weight": 0.6,
+    "split": "train"
+  },
+  "body_066_back": {
+    "kind": "body",
+    "view": "back",
+    "prompt": "back view, seen from behind, sand sports bra, taupe high-waist leggings, sneakers, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, quiet street, morning sun",
+    "seed": 7018,
+    "yaw": 180,
+    "ip_weight": 0.2,
+    "split": "train"
+  },
+  "body_067_frontal": {
+    "kind": "body",
+    "view": "frontal",
+    "prompt": "standing front view, hand on hip, mocha knit top, leggings, (baseball cap:1.3), full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, park path with trees, daylight",
+    "seed": 7019,
+    "yaw": 0,
+    "ip_weight": 0.6,
+    "split": "train"
+  },
+  "body_068_three_quarter": {
+    "kind": "body",
+    "view": "three_quarter",
+    "prompt": "three-quarter view, standing, fitted tank top tucked into high-waist jeans, sneakers, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, bright white studio",
+    "seed": 7020,
+    "yaw": 35,
+    "ip_weight": 0.6,
+    "split": "excluded",
+    "excluded_reason": "cropped top / midriff"
+  },
+  "body_069_three_quarter": {
+    "kind": "body",
+    "view": "three_quarter",
+    "prompt": "three-quarter view, hand on hip, ivory fitted shirt tucked into high-waist wide trousers, belt, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, warm minimal living room",
+    "seed": 7021,
+    "yaw": -35,
+    "ip_weight": 0.6,
+    "split": "train"
+  },
+  "body_070_side": {
+    "kind": "body",
+    "view": "side",
+    "prompt": "side view, standing, fitted black tank top, high-waist straight jeans, white sneakers, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, plain beige wall, soft daylight",
+    "seed": 7022,
+    "yaw": 80,
+    "ip_weight": 0.6,
+    "split": "holdout"
+  },
+  "body_071_back": {
+    "kind": "body",
+    "view": "back",
+    "prompt": "back view, seen from behind, sand sports bra, taupe high-waist leggings, sneakers, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, cafe interior, warm window light",
+    "seed": 7023,
+    "yaw": 180,
+    "ip_weight": 0.2,
+    "split": "train"
+  },
+  "crop_048_three_quarter": {
+    "kind": "crop",
+    "view": "three_quarter",
+    "prompt": "waist-up photo, three-quarter view, standing, fitted tank top tucked into high-waist jeans, sneakers, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, quiet street, morning sun",
+    "seed": 7000,
+    "yaw": 35,
+    "ip_weight": 0.6,
+    "split": "train",
+    "parent": "body_048_three_quarter"
+  },
+  "crop_049_three_quarter": {
+    "kind": "crop",
+    "view": "three_quarter",
+    "prompt": "waist-up photo, three-quarter view, hand on hip, ivory fitted shirt tucked into high-waist wide trousers, belt, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, park path with trees, daylight",
+    "seed": 7001,
+    "yaw": -35,
+    "ip_weight": 0.6,
+    "split": "train",
+    "parent": "body_049_three_quarter"
+  },
+  "crop_052_frontal": {
+    "kind": "crop",
+    "view": "frontal",
+    "prompt": "waist-up photo, standing front view, hand on hip, mocha knit top, leggings, (baseball cap:1.3), full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, plain beige wall, soft daylight",
+    "seed": 7004,
+    "yaw": 0,
+    "ip_weight": 0.6,
+    "split": "train",
+    "parent": "body_052_frontal"
+  },
+  "crop_053_three_quarter": {
+    "kind": "crop",
+    "view": "three_quarter",
+    "prompt": "waist-up photo, three-quarter view, standing, fitted tank top tucked into high-waist jeans, sneakers, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, cafe interior, warm window light",
+    "seed": 7005,
+    "yaw": 35,
+    "ip_weight": 0.6,
+    "split": "train",
+    "parent": "body_053_three_quarter"
+  },
+  "crop_054_three_quarter": {
+    "kind": "crop",
+    "view": "three_quarter",
+    "prompt": "waist-up photo, three-quarter view, hand on hip, ivory fitted shirt tucked into high-waist wide trousers, belt, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, quiet street, morning sun",
+    "seed": 7006,
+    "yaw": -35,
+    "ip_weight": 0.6,
+    "split": "train",
+    "parent": "body_054_three_quarter"
+  },
+  "crop_057_frontal": {
+    "kind": "crop",
+    "view": "frontal",
+    "prompt": "waist-up photo, standing front view, hand on hip, mocha knit top, leggings, (baseball cap:1.3), full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, warm minimal living room",
+    "seed": 7009,
+    "yaw": 0,
+    "ip_weight": 0.6,
+    "split": "train",
+    "parent": "body_057_frontal"
+  },
+  "crop_058_three_quarter": {
+    "kind": "crop",
+    "view": "three_quarter",
+    "prompt": "waist-up photo, three-quarter view, standing, fitted tank top tucked into high-waist jeans, sneakers, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, plain beige wall, soft daylight",
+    "seed": 7010,
+    "yaw": 35,
+    "ip_weight": 0.6,
+    "split": "train",
+    "parent": "body_058_three_quarter"
+  },
+  "crop_062_frontal": {
+    "kind": "crop",
+    "view": "frontal",
+    "prompt": "waist-up photo, standing front view, hand on hip, mocha knit top, leggings, (baseball cap:1.3), full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, bright white studio",
+    "seed": 7014,
+    "yaw": 0,
+    "ip_weight": 0.6,
+    "split": "train",
+    "parent": "body_062_frontal"
+  },
+  "crop_064_three_quarter": {
+    "kind": "crop",
+    "view": "three_quarter",
+    "prompt": "waist-up photo, three-quarter view, hand on hip, ivory fitted shirt tucked into high-waist wide trousers, belt, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, plain beige wall, soft daylight",
+    "seed": 7016,
+    "yaw": -35,
+    "ip_weight": 0.6,
+    "split": "train",
+    "parent": "body_064_three_quarter"
+  },
+  "crop_067_frontal": {
+    "kind": "crop",
+    "view": "frontal",
+    "prompt": "waist-up photo, standing front view, hand on hip, mocha knit top, leggings, (baseball cap:1.3), full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, park path with trees, daylight",
+    "seed": 7019,
+    "yaw": 0,
+    "ip_weight": 0.6,
+    "split": "train",
+    "parent": "body_067_frontal"
+  },
+  "crop_069_three_quarter": {
+    "kind": "crop",
+    "view": "three_quarter",
+    "prompt": "waist-up photo, three-quarter view, hand on hip, ivory fitted shirt tucked into high-waist wide trousers, belt, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, warm minimal living room",
+    "seed": 7021,
+    "yaw": -35,
+    "ip_weight": 0.6,
+    "split": "train",
+    "parent": "body_069_three_quarter"
   }
 }
