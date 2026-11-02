@@ -54,3 +54,6 @@ characters/*/reference_sheet*/*.png
 experiments/*/evaluation/*/
 logs/lora_*/
 !logs/lora_auri/
+
+# MODEL_001 synthetic dataset images (manifest.json stays tracked)
+characters/model_001/dataset/*.png

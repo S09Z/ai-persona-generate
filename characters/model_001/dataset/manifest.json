@@ -1,0 +1,452 @@
+{
+  "head_000_frontal": {
+    "kind": "head",
+    "view": "frontal",
+    "prompt": "front view, soft smile, photo of a young Thai woman, 27, korean-thai natural beauty, fair skin, light freckles, pale milky blue eyes, long dark coffee brown hair, minimal makeup, white tee, plain beige wall, soft daylight",
+    "seed": 5000,
+    "yaw": 0,
+    "ip_weight": 0.6,
+    "split": "train"
+  },
+  "head_001_three_quarter": {
+    "kind": "head",
+    "view": "three_quarter",
+    "prompt": "three-quarter view, relaxed half-smile, photo of a young Thai woman, 27, korean-thai natural beauty, fair skin, light freckles, pale milky blue eyes, long dark coffee brown hair, minimal makeup, ivory knit top, warm minimal living room",
+    "seed": 5001,
+    "yaw": 25,
+    "ip_weight": 0.6,
+    "split": "train",
+    "note": "pose asked for 3/4 but face is mostly frontal; treat as frontal for EXP-005"
+  },
+  "head_002_three_quarter": {
+    "kind": "head",
+    "view": "three_quarter",
+    "prompt": "three-quarter view, calm expression, photo of a young Thai woman, 27, korean-thai natural beauty, fair skin, light freckles, pale milky blue eyes, long dark coffee brown hair, minimal makeup, faded denim shirt, bright white studio",
+    "seed": 5002,
+    "yaw": -25,
+    "ip_weight": 0.6,
+    "split": "train",
+    "note": "pose asked for 3/4 but face is mostly frontal; treat as frontal for EXP-005"
+  },
+  "head_003_three_quarter": {
+    "kind": "head",
+    "view": "three_quarter",
+    "prompt": "three-quarter view, laughing, photo of a young Thai woman, 27, korean-thai natural beauty, fair skin, light freckles, pale milky blue eyes, long dark coffee brown hair, minimal makeup, sand ribbed tank top, park path with trees, daylight",
+    "seed": 5003,
+    "yaw": 40,
+    "ip_weight": 0.6,
+    "split": "holdout",
+    "note": "pose asked for 3/4 but face is mostly frontal; treat as frontal for EXP-005"
+  },
+  "head_004_three_quarter": {
+    "kind": "head",
+    "view": "three_quarter",
+    "prompt": "three-quarter view, soft smile, photo of a young Thai woman, 27, korean-thai natural beauty, fair skin, light freckles, pale milky blue eyes, long dark coffee brown hair, minimal makeup, mocha cardigan, quiet street, morning sun",
+    "seed": 5004,
+    "yaw": -40,
+    "ip_weight": 0.6,
+    "split": "train",
+    "note": "pose asked for 3/4 but face is mostly frontal; treat as frontal for EXP-005"
+  },
+  "head_005_frontal": {
+    "kind": "head",
+    "view": "frontal",
+    "prompt": "front view, relaxed half-smile, photo of a young Thai woman, 27, korean-thai natural beauty, fair skin, light freckles, pale milky blue eyes, long dark coffee brown hair, minimal makeup, black fitted tee, cafe interior, warm window light",
+    "seed": 5005,
+    "yaw": 0,
+    "ip_weight": 0.6,
+    "split": "train"
+  },
+  "head_006_three_quarter": {
+    "kind": "head",
+    "view": "three_quarter",
+    "prompt": "three-quarter view, calm expression, photo of a young Thai woman, 27, korean-thai natural beauty, fair skin, light freckles, pale milky blue eyes, long dark coffee brown hair, minimal makeup, taupe sweatshirt, plain beige wall, soft daylight",
+    "seed": 5006,
+    "yaw": 25,
+    "ip_weight": 0.6,
+    "split": "train",
+    "note": "pose asked for 3/4 but face is mostly frontal; treat as frontal for EXP-005"
+  },
+  "head_007_three_quarter": {
+    "kind": "head",
+    "view": "three_quarter",
+    "prompt": "three-quarter view, laughing, photo of a young Thai woman, 27, korean-thai natural beauty, fair skin, light freckles, pale milky blue eyes, long dark coffee brown hair, minimal makeup, ivory linen shirt, warm minimal living room",
+    "seed": 5007,
+    "yaw": -25,
+    "ip_weight": 0.6,
+    "split": "train",
+    "note": "pose asked for 3/4 but face is mostly frontal; treat as frontal for EXP-005"
+  },
+  "head_008_three_quarter": {
+    "kind": "head",
+    "view": "three_quarter",
+    "prompt": "three-quarter view, soft smile, photo of a young Thai woman, 27, korean-thai natural beauty, fair skin, light freckles, pale milky blue eyes, long dark coffee brown hair, minimal makeup, white tee, bright white studio",
+    "seed": 5008,
+    "yaw": 40,
+    "ip_weight": 0.6,
+    "split": "train",
+    "note": "pose asked for 3/4 but face is mostly frontal; treat as frontal for EXP-005"
+  },
+  "head_009_three_quarter": {
+    "kind": "head",
+    "view": "three_quarter",
+    "prompt": "three-quarter view, relaxed half-smile, photo of a young Thai woman, 27, korean-thai natural beauty, fair skin, light freckles, pale milky blue eyes, long dark coffee brown hair, minimal makeup, ivory knit top, park path with trees, daylight",
+    "seed": 5009,
+    "yaw": -40,
+    "ip_weight": 0.6,
+    "split": "holdout",
+    "note": "pose asked for 3/4 but face is mostly frontal; treat as frontal for EXP-005"
+  },
+  "head_010_frontal": {
+    "kind": "head",
+    "view": "frontal",
+    "prompt": "front view, calm expression, photo of a young Thai woman, 27, korean-thai natural beauty, fair skin, light freckles, pale milky blue eyes, long dark coffee brown hair, minimal makeup, faded denim shirt, quiet street, morning sun",
+    "seed": 5010,
+    "yaw": 0,
+    "ip_weight": 0.6,
+    "split": "train"
+  },
+  "head_011_three_quarter": {
+    "kind": "head",
+    "view": "three_quarter",
+    "prompt": "three-quarter view, laughing, photo of a young Thai woman, 27, korean-thai natural beauty, fair skin, light freckles, pale milky blue eyes, long dark coffee brown hair, minimal makeup, sand ribbed tank top, cafe interior, warm window light",
+    "seed": 5011,
+    "yaw": 25,
+    "ip_weight": 0.6,
+    "split": "train",
+    "note": "pose asked for 3/4 but face is mostly frontal; treat as frontal for EXP-005"
+  },
+  "head_012_three_quarter": {
+    "kind": "head",
+    "view": "three_quarter",
+    "prompt": "three-quarter view, soft smile, photo of a young Thai woman, 27, korean-thai natural beauty, fair skin, light freckles, pale milky blue eyes, long dark coffee brown hair, minimal makeup, mocha cardigan, plain beige wall, soft daylight",
+    "seed": 5012,
+    "yaw": -25,
+    "ip_weight": 0.6,
+    "split": "train",
+    "note": "pose asked for 3/4 but face is mostly frontal; treat as frontal for EXP-005"
+  },
+  "head_013_three_quarter": {
+    "kind": "head",
+    "view": "three_quarter",
+    "prompt": "three-quarter view, relaxed half-smile, photo of a young Thai woman, 27, korean-thai natural beauty, fair skin, light freckles, pale milky blue eyes, long dark coffee brown hair, minimal makeup, black fitted tee, warm minimal living room",
+    "seed": 5013,
+    "yaw": 40,
+    "ip_weight": 0.6,
+    "split": "holdout",
+    "note": "pose asked for 3/4 but face is mostly frontal; treat as frontal for EXP-005"
+  },
+  "head_014_three_quarter": {
+    "kind": "head",
+    "view": "three_quarter",
+    "prompt": "three-quarter view, calm expression, photo of a young Thai woman, 27, korean-thai natural beauty, fair skin, light freckles, pale milky blue eyes, long dark coffee brown hair, minimal makeup, taupe sweatshirt, bright white studio",
+    "seed": 5014,
+    "yaw": -40,
+    "ip_weight": 0.6,
+    "split": "train",
+    "note": "pose asked for 3/4 but face is mostly frontal; treat as frontal for EXP-005"
+  },
+  "head_015_frontal": {
+    "kind": "head",
+    "view": "frontal",
+    "prompt": "front view, laughing, photo of a young Thai woman, 27, korean-thai natural beauty, fair skin, light freckles, pale milky blue eyes, long dark coffee brown hair, minimal makeup, ivory linen shirt, park path with trees, daylight",
+    "seed": 5015,
+    "yaw": 0,
+    "ip_weight": 0.6,
+    "split": "train"
+  },
+  "head_016_three_quarter": {
+    "kind": "head",
+    "view": "three_quarter",
+    "prompt": "three-quarter view, soft smile, photo of a young Thai woman, 27, korean-thai natural beauty, fair skin, light freckles, pale milky blue eyes, long dark coffee brown hair, minimal makeup, white tee, quiet street, morning sun",
+    "seed": 5016,
+    "yaw": 25,
+    "ip_weight": 0.6,
+    "split": "holdout",
+    "note": "pose asked for 3/4 but face is mostly frontal; treat as frontal for EXP-005"
+  },
+  "head_017_three_quarter": {
+    "kind": "head",
+    "view": "three_quarter",
+    "prompt": "three-quarter view, relaxed half-smile, photo of a young Thai woman, 27, korean-thai natural beauty, fair skin, light freckles, pale milky blue eyes, long dark coffee brown hair, minimal makeup, ivory knit top, cafe interior, warm window light",
+    "seed": 5017,
+    "yaw": -25,
+    "ip_weight": 0.6,
+    "split": "train",
+    "note": "pose asked for 3/4 but face is mostly frontal; treat as frontal for EXP-005"
+  },
+  "body_018_frontal": {
+    "kind": "body",
+    "view": "frontal",
+    "prompt": "standing front view, relaxed, full-length white tee tucked into high-waist jeans, white sneakers, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, cafe interior, warm window light",
+    "seed": 6000,
+    "yaw": 0,
+    "ip_weight": 0.6,
+    "split": "train"
+  },
+  "body_019_frontal": {
+    "kind": "body",
+    "view": "frontal",
+    "prompt": "standing front view, hand on hip, ivory shirt tucked into high-waist sand trousers, brown loafers, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, quiet street, morning sun",
+    "seed": 6001,
+    "yaw": 0,
+    "ip_weight": 0.6,
+    "split": "holdout"
+  },
+  "body_020_three_quarter": {
+    "kind": "body",
+    "view": "three_quarter",
+    "prompt": "three-quarter view, standing, simple black dress, small bag, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, park path with trees, daylight",
+    "seed": 6002,
+    "yaw": 35,
+    "ip_weight": 0.6,
+    "split": "train"
+  },
+  "body_021_three_quarter": {
+    "kind": "body",
+    "view": "three_quarter",
+    "prompt": "three-quarter view, hand on hip, (baseball cap:1.3), zip jacket, wide trousers, sneakers, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, bright white studio",
+    "seed": 6003,
+    "yaw": -35,
+    "ip_weight": 0.6,
+    "split": "train"
+  },
+  "body_022_side": {
+    "kind": "body",
+    "view": "side",
+    "prompt": "side view, standing, knit top, midi skirt, thin gold necklace, flats, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, warm minimal living room",
+    "seed": 6004,
+    "yaw": 80,
+    "ip_weight": 0.6,
+    "split": "holdout"
+  },
+  "body_023_back": {
+    "kind": "body",
+    "view": "back",
+    "prompt": "back view, seen from behind, mocha cardigan, high-waist wide jeans, chunky sneakers, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, plain beige wall, soft daylight",
+    "seed": 6005,
+    "yaw": 180,
+    "ip_weight": 0.2,
+    "split": "holdout"
+  },
+  "body_024_frontal": {
+    "kind": "body",
+    "view": "frontal",
+    "prompt": "standing front view, relaxed, ivory shirt tucked into high-waist sand trousers, brown loafers, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, cafe interior, warm window light",
+    "seed": 6006,
+    "yaw": 0,
+    "ip_weight": 0.6,
+    "split": "train"
+  },
+  "body_025_frontal": {
+    "kind": "body",
+    "view": "frontal",
+    "prompt": "standing front view, hand on hip, simple black dress, small bag, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, quiet street, morning sun",
+    "seed": 6007,
+    "yaw": 0,
+    "ip_weight": 0.6,
+    "split": "train"
+  },
+  "body_026_three_quarter": {
+    "kind": "body",
+    "view": "three_quarter",
+    "prompt": "three-quarter view, standing, (baseball cap:1.3), zip jacket, wide trousers, sneakers, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, park path with trees, daylight",
+    "seed": 6008,
+    "yaw": 35,
+    "ip_weight": 0.6,
+    "split": "train"
+  },
+  "body_027_three_quarter": {
+    "kind": "body",
+    "view": "three_quarter",
+    "prompt": "three-quarter view, hand on hip, knit top, midi skirt, thin gold necklace, flats, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, bright white studio",
+    "seed": 6009,
+    "yaw": -35,
+    "ip_weight": 0.6,
+    "split": "excluded",
+    "excluded_reason": "cropped top / midriff"
+  },
+  "body_028_side": {
+    "kind": "body",
+    "view": "side",
+    "prompt": "side view, standing, mocha cardigan, high-waist wide jeans, chunky sneakers, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, warm minimal living room",
+    "seed": 6010,
+    "yaw": 80,
+    "ip_weight": 0.6,
+    "split": "train"
+  },
+  "body_029_back": {
+    "kind": "body",
+    "view": "back",
+    "prompt": "back view, seen from behind, sand sports bra, taupe leggings, (zip jacket:1.2), full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, plain beige wall, soft daylight",
+    "seed": 6011,
+    "yaw": 180,
+    "ip_weight": 0.2,
+    "split": "excluded",
+    "excluded_reason": "bare feet, awkward pose"
+  },
+  "body_030_frontal": {
+    "kind": "body",
+    "view": "frontal",
+    "prompt": "standing front view, relaxed, simple black dress, small bag, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, cafe interior, warm window light",
+    "seed": 6012,
+    "yaw": 0,
+    "ip_weight": 0.6,
+    "split": "train"
+  },
+  "body_031_frontal": {
+    "kind": "body",
+    "view": "frontal",
+    "prompt": "standing front view, hand on hip, (baseball cap:1.3), zip jacket, wide trousers, sneakers, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, quiet street, morning sun",
+    "seed": 6013,
+    "yaw": 0,
+    "ip_weight": 0.6,
+    "split": "train"
+  },
+  "body_032_three_quarter": {
+    "kind": "body",
+    "view": "three_quarter",
+    "prompt": "three-quarter view, standing, knit top, midi skirt, thin gold necklace, flats, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, park path with trees, daylight",
+    "seed": 6014,
+    "yaw": 35,
+    "ip_weight": 0.6,
+    "split": "train"
+  },
+  "body_033_three_quarter": {
+    "kind": "body",
+    "view": "three_quarter",
+    "prompt": "three-quarter view, hand on hip, mocha cardigan, high-waist wide jeans, chunky sneakers, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, bright white studio",
+    "seed": 6015,
+    "yaw": -35,
+    "ip_weight": 0.6,
+    "split": "holdout"
+  },
+  "body_034_side": {
+    "kind": "body",
+    "view": "side",
+    "prompt": "side view, standing, sand sports bra, taupe leggings, (zip jacket:1.2), full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, warm minimal living room",
+    "seed": 6016,
+    "yaw": 80,
+    "ip_weight": 0.6,
+    "split": "train"
+  },
+  "body_035_back": {
+    "kind": "body",
+    "view": "back",
+    "prompt": "back view, seen from behind, oversized denim jacket, white tee, straight jeans, clean sneakers, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, plain beige wall, soft daylight",
+    "seed": 6017,
+    "yaw": 180,
+    "ip_weight": 0.2,
+    "split": "train"
+  },
+  "body_036_frontal": {
+    "kind": "body",
+    "view": "frontal",
+    "prompt": "standing front view, relaxed, (baseball cap:1.3), zip jacket, wide trousers, sneakers, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, cafe interior, warm window light",
+    "seed": 6018,
+    "yaw": 0,
+    "ip_weight": 0.6,
+    "split": "train"
+  },
+  "body_037_frontal": {
+    "kind": "body",
+    "view": "frontal",
+    "prompt": "standing front view, hand on hip, knit top, midi skirt, thin gold necklace, flats, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, quiet street, morning sun",
+    "seed": 6019,
+    "yaw": 0,
+    "ip_weight": 0.6,
+    "split": "train"
+  },
+  "body_038_three_quarter": {
+    "kind": "body",
+    "view": "three_quarter",
+    "prompt": "three-quarter view, standing, mocha cardigan, high-waist wide jeans, chunky sneakers, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, park path with trees, daylight",
+    "seed": 6020,
+    "yaw": 35,
+    "ip_weight": 0.6,
+    "split": "train"
+  },
+  "body_039_three_quarter": {
+    "kind": "body",
+    "view": "three_quarter",
+    "prompt": "three-quarter view, hand on hip, sand sports bra, taupe leggings, (zip jacket:1.2), full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, bright white studio",
+    "seed": 6021,
+    "yaw": -35,
+    "ip_weight": 0.6,
+    "split": "excluded",
+    "excluded_reason": "cropped top / midriff"
+  },
+  "body_040_side": {
+    "kind": "body",
+    "view": "side",
+    "prompt": "side view, standing, oversized denim jacket, white tee, straight jeans, clean sneakers, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, warm minimal living room",
+    "seed": 6022,
+    "yaw": 80,
+    "ip_weight": 0.6,
+    "split": "train"
+  },
+  "body_041_back": {
+    "kind": "body",
+    "view": "back",
+    "prompt": "back view, seen from behind, full-length white tee tucked into high-waist jeans, white sneakers, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, plain beige wall, soft daylight",
+    "seed": 6023,
+    "yaw": 180,
+    "ip_weight": 0.2,
+    "split": "train"
+  },
+  "body_042_frontal": {
+    "kind": "body",
+    "view": "frontal",
+    "prompt": "standing front view, relaxed, knit top, midi skirt, thin gold necklace, flats, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, cafe interior, warm window light",
+    "seed": 6024,
+    "yaw": 0,
+    "ip_weight": 0.6,
+    "split": "train"
+  },
+  "body_043_frontal": {
+    "kind": "body",
+    "view": "frontal",
+    "prompt": "standing front view, hand on hip, mocha cardigan, high-waist wide jeans, chunky sneakers, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, quiet street, morning sun",
+    "seed": 6025,
+    "yaw": 0,
+    "ip_weight": 0.6,
+    "split": "train"
+  },
+  "body_044_three_quarter": {
+    "kind": "body",
+    "view": "three_quarter",
+    "prompt": "three-quarter view, standing, sand sports bra, taupe leggings, (zip jacket:1.2), full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, park path with trees, daylight",
+    "seed": 6026,
+    "yaw": 35,
+    "ip_weight": 0.6,
+    "split": "holdout"
+  },
+  "body_045_three_quarter": {
+    "kind": "body",
+    "view": "three_quarter",
+    "prompt": "three-quarter view, hand on hip, oversized denim jacket, white tee, straight jeans, clean sneakers, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, bright white studio",
+    "seed": 6027,
+    "yaw": -35,
+    "ip_weight": 0.6,
+    "split": "train"
+  },
+  "body_046_side": {
+    "kind": "body",
+    "view": "side",
+    "prompt": "side view, standing, full-length white tee tucked into high-waist jeans, white sneakers, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, warm minimal living room",
+    "seed": 6028,
+    "yaw": 80,
+    "ip_weight": 0.6,
+    "split": "holdout"
+  },
+  "body_047_back": {
+    "kind": "body",
+    "view": "back",
+    "prompt": "back view, seen from behind, ivory shirt tucked into high-waist sand trousers, brown loafers, full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, plain beige wall, soft daylight",
+    "seed": 6029,
+    "yaw": 180,
+    "ip_weight": 0.2,
+    "split": "excluded",
+    "excluded_reason": "bare feet"
+  }
+}
