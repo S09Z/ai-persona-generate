@@ -11,7 +11,7 @@ Output (default characters/model_001/reference_sheet_comfy/):
 
 Usage:
     uv run scripts/ref_sheet_comfy.py
-    uv run scripts/ref_sheet_comfy.py --views profile_left --steps 8 --size 768   # quick test
+    uv run scripts/ref_sheet_comfy.py --views side_left --steps 8 --size 768   # quick test
 """
 
 from __future__ import annotations
@@ -82,8 +82,8 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default=str(ROOT / "characters/model_001/reference_sheet_comfy"))
     ap.add_argument("--views", nargs="+", default=list(VIEWS), choices=list(VIEWS))
-    ap.add_argument("--scale", type=float, default=0.5, help="IP-Adapter weight")
-    ap.add_argument("--pose-scale", type=float, default=0.8, help="ControlNet strength")
+    ap.add_argument("--scale", type=float, default=0.4, help="IP-Adapter weight")
+    ap.add_argument("--pose-scale", type=float, default=1.0, help="ControlNet strength")
     ap.add_argument("--steps", type=int, default=25)
     ap.add_argument("--cfg", type=float, default=6.0)
     ap.add_argument("--size", type=int, default=1024)

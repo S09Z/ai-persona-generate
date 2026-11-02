@@ -55,8 +55,10 @@ VIEWS = {
     "front": ("front view, looking straight at camera, calm neutral expression", 2001, 0),
     "three_quarter_left": ("three-quarter view, head turned to her left, calm expression", 2002, 35),
     "three_quarter_right": ("three-quarter view, head turned to her right, calm expression", 2003, -35),
-    "profile_left": ("side profile view facing left, calm expression", 2004, 80),
-    "profile_right": ("side profile view facing right, calm expression", 2005, -80),
+    # True profile is not reachable from a frontal master face (the IP-Adapter pulls the head back),
+    # so the side views are deep three-quarter views; accepted as the sheet's side angles.
+    "side_left": ("deep three-quarter view, head turned far to her left, calm expression", 2004, 70),
+    "side_right": ("deep three-quarter view, head turned far to her right, calm expression", 2005, -70),
     "smile": ("front view, natural gentle smile", 2006, 0),
     "calm_looking_down": ("front view, eyes lowered, soft calm expression", 2007, 0),
 }
