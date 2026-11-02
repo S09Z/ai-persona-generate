@@ -20,10 +20,10 @@
     "product try-on"
   ],
   "appearance": {
-    "face": "young Thai woman, soft oval face, warm golden honey skin with yellow-golden undertone, natural realistic skin texture, natural warm makeup, korean-thai look, sweet but confident, not exaggerated",
-    "eye_color": "dark brown eyes",
-    "hair": "long dark hair, black to deep brown, center part, soft natural texture",
-    "body_type": "petite small frame, hourglass shape, visibly defined waist, softly rounded hips, slender proportionate legs, natural realistic anatomy",
+    "face": "young Thai woman, soft oval face, korean-thai elegant look with natural Thai beauty, girl-next-door freshness, fair skin with a few light freckles across nose and cheeks, natural realistic skin texture, minimal natural makeup, gentle sweet but confident, not mixed-race looking, not glamorous or high-society",
+    "eye_color": "pale milky light blue eyes, rice-water blue",
+    "hair": "long dark coffee brown hair, rich deep brown all over with no highlights, center part, soft natural texture",
+    "body_type": "hourglass figure, full bust, narrow defined waist, wide full rounded hips and prominent round glutes, toned athletic fit body with firm lean muscle, subtle faint abs, slender toned legs, natural realistic proportions and anatomy",
     "signature_features": "large round eyes, calm confident expression, natural subtle smile, elegant relaxed posture"
   },
   "visual_style": {
@@ -69,12 +69,12 @@
     "locked_choices": {
       "face_shape": "soft_oval",
       "eyes": "round",
-      "hair": "long_dark",
-      "persona": "korean_thai",
+      "hair": "long_dark_coffee_brown",
+      "eye_color": "pale_milky_blue",
+      "persona": "korean_thai_natural_girl_next_door",
       "body": "hourglass"
     },
     "assumptions_to_confirm": [
-      "eye_color dark brown (chat did not specify)",
       "height_cm 160 and weight_kg 50 are design notes only; image models cannot enforce them, so the prompt uses descriptive terms instead",
       "age appearance adult 25-29 (age_virtual 27)"
     ],
@@ -82,8 +82,8 @@
       "ethnicity_look": "Thai",
       "height_cm": 160,
       "weight_kg": 50,
-      "skin_tone": "warm golden honey",
-      "undertone": "yellow-golden"
+      "skin_tone": "fair, with a few light freckles",
+      "undertone": "neutral-warm"
     },
     "palette_hex": {
       "ivory": "#F2EBDD",
@@ -100,7 +100,8 @@
       "minimalist": "ivory shirt, tailored trousers, loafers",
       "modern_executive": "blazer, straight trousers, structured bag",
       "soft_elegant": "knit top, midi skirt, gold jewelry",
-      "evening_muse": "simple black dress, few accessories"
+      "evening_muse": "simple black dress, few accessories",
+      "athleisure": "fitted sports bra and high-waist leggings in sand, taupe, mocha or espresso, clean gym or warm minimalist studio"
     },
     "production_rules": {
       "lighting": "soft natural daylight",
@@ -120,7 +121,8 @@
       "excessive accessories",
       "cheap-ad poses",
       "western-model look",
-      "overly sexy styling"
+      "overly sexy styling",
+      "bodybuilder physique, bulky or veiny muscle, hard six-pack, broad shoulders"
     ],
     "fixed": [
       "facial_identity",

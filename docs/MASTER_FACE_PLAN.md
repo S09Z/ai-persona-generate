@@ -25,7 +25,7 @@ dataset -> `model_001` LoRA -> fashion content. Character spec: `characters/mode
 
 ### 2. Lock the Master Face (your decision)
 - Pick 1 (shortlist 3). Save `master_face.png`, plus seed, prompt, settings in `master_face.json`.
-- Checks: adult-looking 25-29, honey skin tone, Thai look reads naturally, not a recognizable real person (do a reverse-image check yourself), works at angles when imagined.
+- Checks: adult-looking 25-29, fair skin with light freckles, Thai look reads naturally, not a recognizable real person (do a reverse-image check yourself), works at angles when imagined.
 - After locking, never edit these fixed fields: face, skin tone, hair, body proportions.
 
 ### 3. Character Reference Sheet

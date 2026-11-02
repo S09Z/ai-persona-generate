@@ -3,7 +3,8 @@ scripts/master_face_candidates.py -- Stage 1 of the MODEL_001 Master Face plan.
 
 Text-only exploration (base RealVisXL, no LoRA, no identity model). Six face-detail
 variants x N fixed seeds, all inside the locked choices in characters/model_001.json
-(soft oval face, round eyes, long dark hair, Korean-Thai look, warm golden honey skin).
+(soft oval face, pale milky blue eyes, long dark coffee brown hair, Korean-Thai natural
+girl-next-door look, fair skin with light freckles).
 
 Output (default characters/model_001/master_face/candidates/):
     v<k>_s<seed>.png         individual images
@@ -32,12 +33,11 @@ from PIL import Image, ImageDraw  # noqa: E402
 
 load_dotenv(ROOT / ".env")
 
+# CLIP reads only 77 tokens, so the variant goes first and BASE stays short enough to fit after it.
 BASE = (
-    "photo of a young Thai woman, 27 years old, soft oval face, large round dark brown eyes, "
-    "warm golden honey skin with yellow-golden undertone, natural realistic skin texture, "
-    "long dark hair with center part, natural warm makeup, korean-thai look, "
-    "calm confident expression, head and shoulders portrait, 85mm lens, "
-    "soft natural daylight, plain cream backdrop"
+    "photo of a young Thai woman, 27, korean-thai natural beauty, soft oval face, girl-next-door, "
+    "fair skin, light freckles, pale milky blue eyes, long dark coffee brown hair, minimal makeup, "
+    "ivory top, headshot, soft daylight, cream backdrop"
 )
 
 # Only soft facial details vary; no real-person or celebrity references.
@@ -87,7 +87,7 @@ def main() -> None:
     out.mkdir(parents=True, exist_ok=True)
 
     for v in args.variants:
-        prompt = f"{BASE}, {VARIANTS[v]}"
+        prompt = f"{VARIANTS[v]}, {BASE}"
         paths = []
         for seed in args.seeds:
             path = out / f"v{v}_s{seed}.png"
