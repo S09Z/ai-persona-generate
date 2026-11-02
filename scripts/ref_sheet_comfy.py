@@ -85,22 +85,24 @@ def build_workflow(prompt: str, negative: str, face: str, pose: str, *, seed: in
 # first in BODY_BASE so CLIP keeps them; the face is small in a full-body frame, so the IP-Adapter is
 # kept moderate (and low for the back view, where no face is visible).
 BODY_BASE = (
-    "full-body photo of a young Thai woman, 27, hourglass figure, full bust, narrow waist, wide hips, "
-    "toned fit body, long dark coffee brown hair, fair skin, warm minimal studio, soft daylight"
+    "full-body photo of a young Thai woman, 27, curvy hourglass figure, narrow waist, wide hips, "
+    "prominent round glutes, full bust, toned fit body, long dark coffee brown hair, fair skin, "
+    "plain beige wall, soft daylight"
 )
-CASUAL = "oversized white tee, relaxed straight jeans, clean white sneakers"
+CASUAL = "full-length white tee tucked into high-waist jeans, white sneakers"
+BODY_NEGATIVE = ", cropped top, midriff, bare belly, pink wall, terracotta wall, trash can, bin, plant pot"
 BODY_VIEWS = {
     "body_front": ("standing front view, arms relaxed", CASUAL, 3001, 0, "down", 0.6),
-    "body_three_quarter": ("three-quarter view, hand on hip", CASUAL, 3002, 35, "hand_on_hip", 0.6),
+    "body_three_quarter": ("three-quarter view, hands in pockets", CASUAL, 3002, 35, "hand_on_hip", 0.6),
     "body_side": ("side view, standing", CASUAL, 3003, 80, "down", 0.5),
     "body_back": ("back view, seen from behind", CASUAL, 3004, 180, "down", 0.2),
     "arche_casual_cool": ("standing front view, hand on hip", CASUAL, 3011, 0, "hand_on_hip", 0.6),
     "arche_tomboy_chic": ("standing front view, relaxed",
-                          "cap, loose zip jacket, wide trousers, chunky sneakers, thin gold necklace", 3012, 0, "down", 0.6),
+                          "(baseball cap:1.3), zip jacket, wide trousers, sneakers", 3012, 0, "down", 0.6),
     "arche_athleisure": ("standing front view, hand on hip",
-                         "fitted sand sports bra, high-waist taupe leggings, loose zip jacket", 3013, 0, "hand_on_hip", 0.6),
+                         "sand sports bra, taupe leggings, (zip jacket:1.2)", 3013, 0, "hand_on_hip", 0.6),
     "arche_minimalist": ("standing front view, relaxed",
-                         "ivory shirt, tailored sand trousers, loafers", 3014, 0, "down", 0.6),
+                         "ivory shirt tucked into high-waist sand trousers, brown loafers", 3014, 0, "down", 0.6),
 }
 
 
@@ -159,7 +161,7 @@ def main() -> None:
         pose_path = out / f"pose_{name}.png"
         pose_img.save(pose_path)
         pose = upload(f"namphueng_pose_{name}.png", pose_path.read_bytes())
-        wf = build_workflow(prompt, NEGATIVE_PROMPT + EXTRA_NEGATIVE, face, pose, seed=seed, steps=args.steps,
+        wf = build_workflow(prompt, NEGATIVE_PROMPT + EXTRA_NEGATIVE + (BODY_NEGATIVE if args.mode == "body" else ""), face, pose, seed=seed, steps=args.steps,
                             cfg=args.cfg, size=size, ip_weight=ipw, pose_strength=args.pose_scale,
                             prefix=f"namphueng_{name}_{uuid.uuid4().hex[:6]}")
         t0 = time.monotonic()
