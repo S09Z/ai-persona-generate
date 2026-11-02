@@ -38,6 +38,7 @@ from PIL import Image  # noqa: E402
 from idol_generate import comfyui_client as cc  # noqa: E402
 from idol_generate.character import Character  # noqa: E402
 from idol_generate.prompt_builder import CONTENT_CONFIGS, build_post  # noqa: E402
+from body_depth import hourglass_depth  # noqa: E402
 from openpose_draw import body_pose  # noqa: E402
 from ref_sheet import EXTRA_NEGATIVE, MASTER  # noqa: E402
 from ref_sheet_comfy import upload  # noqa: E402
@@ -55,11 +56,16 @@ POSES = {  # name -> (yaw, arms, IP-Adapter weight)
     "side": (80, "down", 0.5),
     "back": (180, "down", 0.2),
 }
+# The skeleton sets the angle, but the text has to agree or the model turns the face to the camera
+VIEW_TEXT = {"three_quarter": "three-quarter view", "three_quarter_hip": "three-quarter view",
+             "three_quarter_hip_r": "three-quarter view", "side": "side view",
+             "back": "back view, seen from behind"}
 AUTO_POSES = ["front", "front_hip", "three_quarter", "three_quarter_hip", "three_quarter_hip_r"]
 
 
 def build_workflow(post: dict, face: str, pose: str, *, seed: int, steps: int, cfg: float,
-                   ip_weight: float, prefix: str) -> dict:
+                   ip_weight: float, prefix: str, depth: str | None = None, depth_strength: float = 0.0,
+                   depth_end: float = 0.6) -> dict:
     w, h = SIZE
 
     def encode(g: str, l: str) -> dict:
@@ -67,7 +73,7 @@ def build_workflow(post: dict, face: str, pose: str, *, seed: int, steps: int, c
             "clip": ["1", 1], "width": w, "height": h, "crop_w": 0, "crop_h": 0,
             "target_width": w, "target_height": h, "text_g": g, "text_l": l}}
 
-    return {
+    wf = {
         "1": {"class_type": "CheckpointLoaderSimple", "inputs": {"ckpt_name": "RealVisXL_V4.0.safetensors"}},
         "2": {"class_type": "CLIPVisionLoader", "inputs": {"clip_name": "model.safetensors"}},
         "3": {"class_type": "IPAdapterModelLoader",
@@ -93,6 +99,16 @@ def build_workflow(post: dict, face: str, pose: str, *, seed: int, steps: int, c
         "13": {"class_type": "VAEDecode", "inputs": {"samples": ["12", 0], "vae": ["1", 2]}},
         "14": {"class_type": "SaveImage", "inputs": {"images": ["13", 0], "filename_prefix": prefix}},
     }
+    if depth and depth_strength > 0:  # second ControlNet: body volume (hips, waist) that OpenPose cannot carry
+        wf["15"] = {"class_type": "ControlNetLoader",
+                    "inputs": {"control_net_name": "depth-sdxl\diffusion_pytorch_model.safetensors"}}
+        wf["16"] = {"class_type": "LoadImage", "inputs": {"image": depth}}
+        wf["17"] = {"class_type": "ControlNetApplyAdvanced", "inputs": {
+            "positive": ["10", 0], "negative": ["10", 1], "control_net": ["15", 0], "image": ["16", 0],
+            "strength": depth_strength, "start_percent": 0.0, "end_percent": depth_end, "vae": ["1", 2]}}
+        wf["12"]["inputs"]["positive"] = ["17", 0]
+        wf["12"]["inputs"]["negative"] = ["17", 1]
+    return wf
 
 
 def png(img: Image.Image) -> bytes:
@@ -108,6 +124,12 @@ def main() -> None:
     ap.add_argument("--pose", choices=["auto", *POSES], default="auto")
     ap.add_argument("--batch", type=int, default=1)
     ap.add_argument("--seed", type=int, default=None)
+    ap.add_argument("--depth", type=float, default=0.0,
+                    help="strength of the hourglass body-volume depth ControlNet (0 = off; try 0.4-0.7); "
+                         "front and back poses only, the silhouette is not rotated")
+    ap.add_argument("--depth-hip", type=float, default=1.0, help="scale the hip width of the depth body")
+    ap.add_argument("--depth-waist", type=float, default=1.0, help="scale the waist width of the depth body")
+    ap.add_argument("--depth-end", type=float, default=0.6, help="stop the depth ControlNet at this fraction of steps")
     ap.add_argument("--steps", type=int, default=25)
     ap.add_argument("--cfg", type=float, default=6.0)
     ap.add_argument("--out", default=str(ROOT / "outputs/comfy"))
@@ -121,7 +143,7 @@ def main() -> None:
         pose_name = args.pose if args.pose != "auto" else AUTO_POSES[(base_seed + i) % len(AUTO_POSES)]
         random.seed(base_seed + i)  # prompt_builder draws pose/environment/mood from `random`
         jobs.append((pose_name, base_seed + i, build_post(character, args.content_type, include_pose=False,
-                                                           framing=FRAMING)))
+                                                           framing=", ".join(filter(None, [FRAMING, VIEW_TEXT.get(pose_name, "")])))))
 
     if args.dry_run:
         for pose_name, seed, post in jobs:
@@ -138,8 +160,14 @@ def main() -> None:
     for pose_name, seed, post in jobs:
         yaw, arms, ipw = POSES[pose_name]
         pose = upload(f"namphueng_pose_{pose_name}.png", png(body_pose(yaw, arms, SIZE)))
+        depth_name = None
+        if args.depth > 0 and yaw in (0, 180):
+            depth_name = upload("namphueng_body_depth.png", png(hourglass_depth(SIZE, waist=args.depth_waist, hip=args.depth_hip)))
+        elif args.depth > 0:
+            print(f"note: --depth skipped for pose {pose_name} (front/back only)")
         wf = build_workflow(post, face, pose, seed=seed, steps=args.steps, cfg=args.cfg, ip_weight=ipw,
-                            prefix=f"namphueng_{uuid.uuid4().hex[:6]}")
+                            prefix=f"namphueng_{uuid.uuid4().hex[:6]}", depth=depth_name,
+                            depth_strength=args.depth, depth_end=args.depth_end)
         t0 = time.monotonic()
         pid = cc._post("prompt", {"prompt": wf})["prompt_id"]
         images = cc.wait_for_result(pid, timeout=900)
