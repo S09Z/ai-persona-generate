@@ -109,7 +109,6 @@ ignore = [
 [tool.ruff.lint.per-file-ignores]
 # sys.path manipulation must precede local imports in standalone scripts
 "generate.py" = ["E402"]
-"first_image.py" = ["E402"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["idol_generate"]
