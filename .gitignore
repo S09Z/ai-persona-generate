@@ -47,3 +47,10 @@ datasets/**
 # Instagram session cookies (secret)
 ig_cookies.json
 !datasets/**/manifest.csv
+
+# Generated candidate and evaluation images (keep only the locked master face, contact sheets and settings)
+characters/*/master_face/candidates*/
+characters/*/reference_sheet/*.png
+experiments/*/evaluation/*/
+logs/lora_*/
+!logs/lora_auri/
