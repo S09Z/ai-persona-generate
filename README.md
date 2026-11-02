@@ -299,6 +299,25 @@ vendor/kohya_gui/.venv/bin/python vendor/kohya_gui/kohya_gui.py \
 
 ---
 
+## ComfyUI backend (optional, Windows)
+
+The default backend is diffusers. ComfyUI is used only with `generate.py --comfyui`.
+
+```powershell
+# 1. Start the server (uses the project .venv and the model folders in configs/comfyui_model_paths.yaml)
+powershell -File scripts/comfyui.ps1          # http://127.0.0.1:8188
+
+# 2. In another terminal
+uv run generate.py --character auri --type fashion --batch 1 --comfyui
+```
+
+- The only workflow is `workflows/luna_portrait.json` (plain RealVisXL text-to-image, node IDs hard-coded in `comfyui_client.py`). It has no LoRA or IP-Adapter node, so it will not reproduce a trained character.
+- `comfyui.sh` is the old macOS launcher; use `scripts/comfyui.ps1` on Windows.
+- Repeating an identical prompt and seed is fully cached by ComfyUI; the client adds a unique save prefix so it still returns an image.
+- ComfyUI prints a warning that the frontend package is 1.42.10 (recommends 1.42.11); the API and UI work.
+
+---
+
 ## Project structure
 
 ```

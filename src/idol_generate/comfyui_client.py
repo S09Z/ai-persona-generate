@@ -74,7 +74,9 @@ def queue_workflow(
     submit to ComfyUI. Returns the prompt_id.
     """
     raw = json.loads(Path(workflow_path).read_text(encoding="utf-8"))
-    workflow = copy.deepcopy(raw)  # never mutate the original
+    # Never mutate the original; drop top-level metadata such as "_meta", which current ComfyUI
+    # rejects with "Node has no class_type" because it treats every key as a node.
+    workflow = copy.deepcopy({k: v for k, v in raw.items() if isinstance(v, dict) and "class_type" in v})
 
     workflow[NODE_POSITIVE_PROMPT]["inputs"]["text"] = positive_prompt
     workflow[NODE_NEGATIVE_PROMPT]["inputs"]["text"] = negative_prompt
@@ -85,6 +87,10 @@ def queue_workflow(
     workflow[NODE_SAMPLER]["inputs"]["cfg"] = cfg
     workflow[NODE_LATENT]["inputs"]["width"] = width
     workflow[NODE_LATENT]["inputs"]["height"] = height
+    # ComfyUI caches by node inputs: a repeated identical prompt (same --seed) is fully cached and
+    # returns no output. A unique save prefix makes SaveImage run again and return the image.
+    save_inputs = workflow[NODE_SAVE]["inputs"]
+    save_inputs["filename_prefix"] = f"{save_inputs.get('filename_prefix', 'idol')}_{int(time.time())}"
 
     result = _post("prompt", {"prompt": workflow})
     return result["prompt_id"]
@@ -113,16 +119,31 @@ def _wait_websocket(prompt_id: str, timeout: float) -> list[str]:
     import websocket  # websocket-client
 
     ws = websocket.WebSocket()
-    ws.connect(f"{_WS_URL}/ws", timeout=timeout)
+    ws.connect(f"{_WS_URL}/ws", timeout=2.0)  # short recv timeout so we can also check history
     deadline = time.monotonic() + timeout
     try:
         while time.monotonic() < deadline:
-            msg = json.loads(ws.recv())
-            if msg.get("type") == "executing":
-                data = msg.get("data", {})
-                # node=None + matching prompt_id means the queue item finished
-                if data.get("node") is None and data.get("prompt_id") == prompt_id:
+            try:
+                raw = ws.recv()
+            except websocket.WebSocketTimeoutException:
+                # No status message arrived (some ComfyUI versions only message the submitting
+                # client); the history endpoint is the source of truth.
+                if _is_done(prompt_id):
                     return _extract_images(prompt_id)
+                continue
+            if isinstance(raw, bytes):  # binary frames carry preview images, not status
+                continue
+            msg = json.loads(raw)
+            data = msg.get("data", {})
+            kind = msg.get("type")
+            # Current ComfyUI sends "execution_success"; older versions send "executing" with
+            # node=None. Without this the loop never sees the end and burns the whole timeout.
+            if kind == "execution_success" and data.get("prompt_id") == prompt_id:
+                return _extract_images(prompt_id)
+            if kind == "executing" and data.get("node") is None and data.get("prompt_id") == prompt_id:
+                return _extract_images(prompt_id)
+            if kind == "execution_error" and data.get("prompt_id") == prompt_id:
+                raise RuntimeError(f"ComfyUI execution error: {data.get('exception_message', data)}")
     finally:
         ws.close()
     raise TimeoutError(f"Timeout waiting for ComfyUI prompt {prompt_id}")
@@ -132,11 +153,18 @@ def _wait_polling(prompt_id: str, timeout: float) -> list[str]:
     """HTTP polling fallback with monotonic timeout."""
     deadline = time.monotonic() + timeout
     while time.monotonic() < deadline:
-        history = _get(f"history/{prompt_id}")
-        if prompt_id in history:
+        if _is_done(prompt_id):
             return _extract_images(prompt_id)
         time.sleep(2.0)
     raise TimeoutError(f"Timeout waiting for ComfyUI prompt {prompt_id}")
+
+
+def _is_done(prompt_id: str) -> bool:
+    """True once the history entry shows the run finished (it can appear while still queued)."""
+    entry = _get(f"history/{prompt_id}").get(prompt_id)
+    if not entry:
+        return False
+    return bool(entry.get("outputs")) or bool(entry.get("status", {}).get("completed"))
 
 
 def _extract_images(prompt_id: str) -> list[str]:
