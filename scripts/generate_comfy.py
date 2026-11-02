@@ -43,6 +43,8 @@ from ref_sheet import EXTRA_NEGATIVE, MASTER  # noqa: E402
 from ref_sheet_comfy import upload  # noqa: E402
 
 SIZE = (832, 1216)
+# Without this the model frames the shot at thigh/shin level and ignores the skeleton's legs
+FRAMING = "full-body photo, head to toe, shoes visible"
 FACE_CROP = (80, 20, 944, 884)
 POSES = {  # name -> (yaw, arms, IP-Adapter weight)
     "front": (0, "down", 0.6),
@@ -118,7 +120,8 @@ def main() -> None:
     for i in range(args.batch):
         pose_name = args.pose if args.pose != "auto" else AUTO_POSES[(base_seed + i) % len(AUTO_POSES)]
         random.seed(base_seed + i)  # prompt_builder draws pose/environment/mood from `random`
-        jobs.append((pose_name, base_seed + i, build_post(character, args.content_type, include_pose=False)))
+        jobs.append((pose_name, base_seed + i, build_post(character, args.content_type, include_pose=False,
+                                                           framing=FRAMING)))
 
     if args.dry_run:
         for pose_name, seed, post in jobs:

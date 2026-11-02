@@ -306,7 +306,8 @@ def _pack(parts: list[str], budget: int = CLIP_TOKEN_BUDGET) -> str:
 
 
 def build_image_prompt(
-    character: Character, content_type: ContentType, mood: str | None = None, include_pose: bool = True
+    character: Character, content_type: ContentType, mood: str | None = None, include_pose: bool = True,
+    framing: str = "",
 ) -> tuple[str, str, str]:
     """Returns (prompt, prompt_2, negative_prompt) — SDXL dual-CLIP split.
 
@@ -314,6 +315,7 @@ def build_image_prompt(
     lower-priority details are dropped rather than silently truncated mid-phrase.
     Pass `mood` to reuse a mood already drawn for the caption/metadata.
     `include_pose=False` leaves the pose phrase out, for backends where a skeleton sets the pose.
+    `framing` (e.g. "full-body photo, head to toe") goes first in prompt_2 so it is never packed out.
     """
     cfg = CONTENT_CONFIGS[content_type]
     a = character.appearance
@@ -336,6 +338,7 @@ def build_image_prompt(
     ])
     # CLIP-G (prompt_2): what she wears and does, where, light and mood first; quality tags last
     prompt_2 = _pack([
+        framing,
         cfg.get("outfit", ""),
         pose if include_pose else "",
         env,
@@ -379,10 +382,14 @@ def build_tags(character: Character, content_type: ContentType) -> list[str]:
     return result
 
 
-def build_post(character: Character, content_type: ContentType, include_pose: bool = True) -> dict:
+def build_post(
+    character: Character, content_type: ContentType, include_pose: bool = True, framing: str = ""
+) -> dict:
     # Single draw for mood so prompt and metadata stay consistent
     mood = random.choice(CONTENT_CONFIGS[content_type]["mood_tags"])
-    prompt, prompt_2, negative_prompt = build_image_prompt(character, content_type, mood, include_pose)
+    prompt, prompt_2, negative_prompt = build_image_prompt(
+        character, content_type, mood, include_pose, framing
+    )
     caption = build_caption(character, content_type)
     tags = build_tags(character, content_type)
     return {
