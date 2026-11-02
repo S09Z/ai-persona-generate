@@ -57,3 +57,7 @@ logs/lora_*/
 
 # MODEL_001 synthetic dataset images (manifest.json stays tracked)
 characters/model_001/dataset/*.png
+
+# MODEL_001 target look (user-supplied AI-generated reference) and candidates made from it
+characters/model_001/target/*.png
+characters/model_001/master_face/target_candidates*/
