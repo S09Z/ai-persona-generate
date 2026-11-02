@@ -18,6 +18,7 @@ from __future__ import annotations
 import argparse
 import io
 import json
+import math
 import random
 import sys
 import time
@@ -37,7 +38,7 @@ from PIL import Image  # noqa: E402
 
 from idol_generate import comfyui_client as cc  # noqa: E402
 from idol_generate.character import Character  # noqa: E402
-from idol_generate.prompt_builder import CONTENT_CONFIGS, build_post  # noqa: E402
+from idol_generate.prompt_builder import CONTENT_CONFIGS, NEGATIVE_PROMPT, _pack, _phrases, build_post  # noqa: E402
 from body_depth import hourglass_depth  # noqa: E402
 from openpose_draw import body_pose  # noqa: E402
 from ref_sheet import EXTRA_NEGATIVE, MASTER  # noqa: E402
@@ -111,6 +112,57 @@ def build_workflow(post: dict, face: str, pose: str, *, seed: int, steps: int, c
     return wf
 
 
+def head_box(yaw: float, size: tuple[int, int] = SIZE, side: int = 300) -> tuple[int, int, int, int]:
+    """Square crop (x, y, w, h) around the head, from the same nose keypoint openpose_draw uses."""
+    w, h = size
+    s = h / 1216
+    nose_x = w / 2 + (0 * math.cos(math.radians(yaw)) + 40 * math.sin(math.radians(yaw))) * s
+    side = round(side * s)
+    x = min(max(round(nose_x - side / 2), 0), w - side)
+    y = min(max(round(150 * s - side / 2), 0), h - side)
+    return x, y, side, side
+
+
+def build_face_workflow(image: str, face: str, text: str, negative: str, box: tuple[int, int, int, int], *,
+                        seed: int, steps: int, cfg: float, ip_weight: float, denoise: float,
+                        prefix: str) -> dict:
+    """Second pass: re-render only the head at 1024px with a strong IP-Adapter, then feather it back in."""
+    x, y, bw, bh = box
+    feather = max(bw // 6, 8)
+    return {
+        "1": {"class_type": "CheckpointLoaderSimple", "inputs": {"ckpt_name": "RealVisXL_V4.0.safetensors"}},
+        "2": {"class_type": "CLIPVisionLoader", "inputs": {"clip_name": "model.safetensors"}},
+        "3": {"class_type": "IPAdapterModelLoader",
+              "inputs": {"ipadapter_file": "ip-adapter-plus-face_sdxl_vit-h.safetensors"}},
+        "4": {"class_type": "LoadImage", "inputs": {"image": face}},
+        "5": {"class_type": "IPAdapterAdvanced", "inputs": {
+            "model": ["1", 0], "ipadapter": ["3", 0], "image": ["4", 0], "clip_vision": ["2", 0],
+            "weight": ip_weight, "weight_type": "linear", "combine_embeds": "concat",
+            "start_at": 0.0, "end_at": 1.0, "embeds_scaling": "V only"}},
+        "6": {"class_type": "CLIPTextEncode", "inputs": {"text": text, "clip": ["1", 1]}},
+        "7": {"class_type": "CLIPTextEncode", "inputs": {"text": negative, "clip": ["1", 1]}},
+        "20": {"class_type": "LoadImage", "inputs": {"image": image}},
+        "21": {"class_type": "ImageCrop", "inputs": {"image": ["20", 0], "width": bw, "height": bh, "x": x, "y": y}},
+        "22": {"class_type": "ImageScale", "inputs": {"image": ["21", 0], "upscale_method": "lanczos",
+                                                      "width": 1024, "height": 1024, "crop": "disabled"}},
+        "23": {"class_type": "VAEEncode", "inputs": {"pixels": ["22", 0], "vae": ["1", 2]}},
+        "12": {"class_type": "KSampler", "inputs": {
+            "model": ["5", 0], "positive": ["6", 0], "negative": ["7", 0], "latent_image": ["23", 0],
+            "seed": seed, "steps": steps, "cfg": cfg, "sampler_name": "dpmpp_2m",
+            "scheduler": "karras", "denoise": denoise}},
+        "13": {"class_type": "VAEDecode", "inputs": {"samples": ["12", 0], "vae": ["1", 2]}},
+        "24": {"class_type": "ImageScale", "inputs": {"image": ["13", 0], "upscale_method": "lanczos",
+                                                      "width": bw, "height": bh, "crop": "disabled"}},
+        "25": {"class_type": "SolidMask", "inputs": {"value": 1.0, "width": bw, "height": bh}},
+        "26": {"class_type": "FeatherMask", "inputs": {"mask": ["25", 0], "left": feather, "top": feather,
+                                                       "right": feather, "bottom": feather}},
+        "27": {"class_type": "ImageCompositeMasked", "inputs": {
+            "destination": ["20", 0], "source": ["24", 0], "x": x, "y": y, "resize_source": False,
+            "mask": ["26", 0]}},
+        "14": {"class_type": "SaveImage", "inputs": {"images": ["27", 0], "filename_prefix": prefix}},
+    }
+
+
 def png(img: Image.Image) -> bytes:
     b = io.BytesIO()
     img.save(b, format="PNG")
@@ -129,6 +181,11 @@ def main() -> None:
                          "front and back poses only, the silhouette is not rotated")
     ap.add_argument("--depth-hip", type=float, default=1.0, help="scale the hip width of the depth body")
     ap.add_argument("--depth-waist", type=float, default=1.0, help="scale the waist width of the depth body")
+    ap.add_argument("--face-pass", action="store_true",
+                    help="re-render the head at 1024px with a strong IP-Adapter and blend it back (fixes small, "
+                         "off-model faces and eye colour); skipped for back views")
+    ap.add_argument("--face-ip", type=float, default=0.85, help="IP-Adapter weight in the face pass")
+    ap.add_argument("--face-denoise", type=float, default=0.45, help="how far the face pass may change the head")
     ap.add_argument("--depth-end", type=float, default=0.6, help="stop the depth ControlNet at this fraction of steps")
     ap.add_argument("--steps", type=int, default=25)
     ap.add_argument("--cfg", type=float, default=6.0)
@@ -175,6 +232,18 @@ def main() -> None:
             sys.exit("no image returned")
         stem = f"{character.name.lower()}_{args.content_type}_{ts}_s{seed}"
         cc.download_image(images[0], out / f"{stem}.png")
+        if args.face_pass and yaw != 180:
+            a = character.appearance
+            text = _pack([_phrases(a.face, 5), _phrases(a.eye_color, 1), "detailed eyes, natural skin texture"])
+            stage1 = upload(f"namphueng_stage1_{stem}.png", (out / f"{stem}.png").read_bytes())
+            fwf = build_face_workflow(stage1, face, text, NEGATIVE_PROMPT + EXTRA_NEGATIVE, head_box(yaw),
+                                      seed=seed, steps=args.steps, cfg=args.cfg, ip_weight=args.face_ip,
+                                      denoise=args.face_denoise, prefix=f"namphueng_face_{uuid.uuid4().hex[:6]}")
+            fpid = cc._post("prompt", {"prompt": fwf})["prompt_id"]
+            fimgs = cc.wait_for_result(fpid, timeout=900)
+            if fimgs:
+                cc.download_image(fimgs[0], out / f"{stem}_face.png")
+                post["image_face_pass"] = f"{stem}_face.png"
         post.update(seed=seed, pose=pose_name, ip_weight=ipw, image=f"{stem}.png")
         (out / f"{stem}.json").write_text(json.dumps(post, indent=2, ensure_ascii=False), encoding="utf-8")
         print(f"saved {out / (stem + '.png')} ({time.monotonic() - t0:.0f}s) | {post['caption']}", flush=True)
