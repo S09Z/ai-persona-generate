@@ -107,15 +107,23 @@ def main() -> None:
     from diffusers import ControlNetModel, StableDiffusionXLControlNetPipeline
 
     controlnet = ControlNetModel.from_pretrained(str(CONTROLNET_DIR), torch_dtype=pipe.unet.dtype)
-    cpipe = StableDiffusionXLControlNetPipeline.from_pipe(pipe, controlnet=controlnet).to(device)
+    cpipe = StableDiffusionXLControlNetPipeline.from_pipe(pipe, controlnet=controlnet)
+    # UNet + IP-Adapter + ControlNet + encoders do not fit in 12 GB together; without offload the
+    # overflow spills into system RAM and a step takes ~12 minutes instead of ~1 second.
+    cpipe.enable_model_cpu_offload()
 
     face = Image.open(MASTER).convert("RGB")
     proc = CLIPImageProcessor()
 
+    # Similarity scoring runs on the CPU with its own copy of the encoder so it never competes for VRAM
+    from transformers import CLIPVisionModelWithProjection
+
+    scorer = CLIPVisionModelWithProjection.from_pretrained(str(IP_DIR / "models" / "image_encoder")).eval()
+
     def embed(img: Image.Image) -> torch.Tensor:
-        px = proc(images=img, return_tensors="pt").pixel_values.to(device, dtype=pipe.image_encoder.dtype)
+        px = proc(images=img, return_tensors="pt").pixel_values
         with torch.no_grad():
-            e = pipe.image_encoder(px).image_embeds
+            e = scorer(px).image_embeds
         return torch.nn.functional.normalize(e.float(), dim=-1)
 
     ref = embed(face)

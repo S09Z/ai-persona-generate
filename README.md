@@ -313,6 +313,7 @@ uv run generate.py --character auri --type fashion --batch 1 --comfyui
 
 - The only workflow is `workflows/luna_portrait.json` (plain RealVisXL text-to-image, node IDs hard-coded in `comfyui_client.py`). It has no LoRA or IP-Adapter node, so it will not reproduce a trained character.
 - `comfyui.sh` is the old macOS launcher; use `scripts/comfyui.ps1` on Windows.
+- Reference sheet (identity + angle) runs here, not in diffusers: `uv run scripts/ref_sheet_comfy.py` (about 17 s per 1024px view). It needs the `ComfyUI_IPAdapter_plus` custom node (`git clone https://github.com/cubiq/ComfyUI_IPAdapter_plus` into `vendor/ComfyUI/custom_nodes/`, reviewed at commit a0f451a). The diffusers `scripts/ref_sheet.py` ControlNet path spills out of 12 GB and runs ~3 minutes per step, so only use it for IP-Adapter-only experiments.
 - Repeating an identical prompt and seed is fully cached by ComfyUI; the client adds a unique save prefix so it still returns an image.
 - ComfyUI prints a warning that the frontend package is 1.42.10 (recommends 1.42.11); the API and UI work.
 
