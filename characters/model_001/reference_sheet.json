@@ -1,0 +1,58 @@
+{
+  "locked_on": "2026-11-02",
+  "status": "head views locked; side views are deep three-quarter, not true profile",
+  "tool": "scripts/ref_sheet_comfy.py --mode head",
+  "ip_adapter": "ip-adapter-plus-face_sdxl_vit-h",
+  "ip_weight": 0.6,
+  "controlnet": "openpose-sdxl",
+  "controlnet_strength": 1.0,
+  "face_crop": "80,20,944,884",
+  "steps": 25,
+  "cfg": 6.0,
+  "size": 1024,
+  "base_prompt": "photo of a young Thai woman, 27, ivory knit top, korean-thai natural beauty, fair skin, light freckles, pale milky blue eyes, long dark coffee brown hair, minimal makeup, soft daylight, cream backdrop",
+  "extra_negative": ", blue top, light blue shirt, turquoise clothing",
+  "views": {
+    "front": {
+      "text": "front view, looking straight at camera, calm neutral expression",
+      "seed": 2001,
+      "yaw": 0
+    },
+    "three_quarter_left": {
+      "text": "three-quarter view, head turned to her left, calm expression",
+      "seed": 2002,
+      "yaw": 35
+    },
+    "three_quarter_right": {
+      "text": "three-quarter view, head turned to her right, calm expression",
+      "seed": 2003,
+      "yaw": -35
+    },
+    "side_left": {
+      "text": "deep three-quarter view, head turned far to her left, calm expression",
+      "seed": 2004,
+      "yaw": 70
+    },
+    "side_right": {
+      "text": "deep three-quarter view, head turned far to her right, calm expression",
+      "seed": 2005,
+      "yaw": -70
+    },
+    "smile": {
+      "text": "front view, natural gentle smile",
+      "seed": 2006,
+      "yaw": 0
+    },
+    "calm_looking_down": {
+      "text": "front view, eyes lowered, soft calm expression",
+      "seed": 2007,
+      "yaw": 0
+    }
+  },
+  "known_issues": [
+    "freckles faint",
+    "side views turn less than the pose asks",
+    "calm_looking_down looks straight ahead"
+  ],
+  "master_face_sha256": "bfd27cd96eddaf90ddb51692794e724e816885ba01c9fd2f742d96d21bd13919"
+}
