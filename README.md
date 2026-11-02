@@ -8,7 +8,8 @@ AI Idol image generation pipeline — scrape reference photos, train a LoRA, gen
 
 - Python 3.11+
 - [uv](https://github.com/astral-sh/uv) package manager
-- Apple Silicon Mac (MPS) **or** NVIDIA GPU (CUDA)
+- Apple Silicon Mac (MPS) **or** NVIDIA GPU (CUDA, Windows or Linux)
+- RTX 50-series (Blackwell) needs torch **2.7.1 + cu128**; older builds have no kernels for it
 - [Playwright](https://playwright.dev/) Chromium (for Instagram scraping)
 
 ---
@@ -33,6 +34,28 @@ python3.11 -m venv vendor/kohya_ss/.venv
 vendor/kohya_ss/.venv/bin/pip install -r vendor/kohya_ss/requirements.txt
 vendor/kohya_ss/.venv/bin/pip install torchvision tensorboard
 ```
+
+### Windows + NVIDIA (PowerShell)
+
+Set up and tested on Windows 11 with an RTX 5070 12 GB.
+
+```powershell
+# Project deps (pyproject pins torch 2.7.1+cu128 from the cu128 index; peft is required for LoRA loading)
+uv sync
+uv run python -c "import torch; print(torch.__version__, torch.cuda.is_available())"   # expect 2.7.1+cu128 True
+
+# kohya sd-scripts in its own venv (kept separate so its pins don't fight the main env)
+git clone https://github.com/kohya-ss/sd-scripts vendor/kohya_ss
+python -m venv vendor/kohya_ss/.venv
+vendor/kohya_ss/.venv/Scripts/python.exe -m pip install -r vendor/kohya_ss/requirements.txt
+# the kohya venv needs the same cu128 torch build as the main env
+```
+
+Windows notes:
+- Set `PYTHONUTF8=1` (or keep the stream reconfigure in `generate.py`) to avoid cp1252 errors on emoji output.
+- `HF_HUB_DISABLE_SYMLINKS_WARNING=1` silences the Hugging Face symlink warning on Windows.
+- Training flags that work on 12 GB: `sdpa`, `full_bf16`, `cache_latents_to_disk`, `AdamW8bit`, gradient checkpointing (see `configs/lora_auri_v2.toml`). `xformers` is not used.
+- `train_lora.py` launches `vendor/kohya_ss/.venv/Scripts/python.exe` through `accelerate`.
 
 ---
 
@@ -154,6 +177,30 @@ uv run train_lora.py --config configs/lora_auri.toml \
 tail -f logs/lora_auri/train.log
 ```
 
+### Dataset hygiene and controlled experiments
+
+`configs/lora_auri_v2.toml` is the CUDA/Windows baseline (1024px, dim 32, 12 epochs, seed 42) and reads an immutable snapshot rather than the live dataset.
+
+```powershell
+# 1. Read-only audit: near-duplicates (dhash), missing captions, writes manifest.csv
+uv run scripts/audit_dataset.py datasets/lora/auri_v1/5_auri_v1 --out manifest.csv
+
+# 2. Build a deduped, caption-cleaned snapshot with a deterministic held-out set (refuses to overwrite)
+uv run scripts/build_clean_snapshot.py datasets/lora/auri_v1/5_auri_v1 `
+  --out datasets/lora/auri_v1_snapshot_<date> --trigger auri_v1 --holdout 10
+
+# 3. Scaffold a one-variable experiment (control and variant differ only by --set)
+uv run scripts/new_experiment.py EXP-007-network-dropout --set lora.network_dropout=0.10
+uv run train_lora.py --config experiments/EXP-007-network-dropout/control/config.toml
+uv run train_lora.py --config experiments/EXP-007-network-dropout/variant/config.toml
+
+# 4. Fixed-seed evaluation grid + contact sheets (prompt sets: experiments/eval_prompts.toml)
+uv run scripts/eval_grid.py --out experiments/EXP-006-lora-weight/evaluation --set weight `
+  --lora auri=models/loras/auri_v2.safetensors --weights 0.6 0.8 1.0 1.2 --base
+```
+
+Fill in `experiments/<name>/results.md` after reviewing the contact sheets. Change one variable per experiment.
+
 ### Monitor with TensorBoard
 
 ```zsh
@@ -262,10 +309,16 @@ idol-generate/
 ├── scrape_images.py         # Instagram + site scraper
 ├── characters/              # persona JSON files
 │   ├── luna.json
-│   └── auri.json
+│   ├── auri.json
+│   └── model_001.json       # synthetic character (see docs/MASTER_FACE_PLAN.md)
 ├── configs/                 # training configs
 │   ├── lora_luna.toml
-│   └── lora_auri.toml
+│   ├── lora_auri.toml       # old Mac-era config
+│   └── lora_auri_v2.toml    # CUDA baseline
+├── scripts/                 # audit, snapshot, experiment, eval, master-face tools
+├── experiments/             # one-variable experiments (control/variant/results.md)
+├── docs/                    # migration and master-face plans
+├── tests/                   # pytest (run: uv run --with pytest pytest -q tests)
 ├── datasets/
 │   ├── instagram/           # scraped raw images (gitignored)
 │   └── lora/                # prepared training datasets
@@ -292,5 +345,11 @@ idol-generate/
 | `model_index.json not found` | Model is a `.safetensors` file, not Diffusers folder | Point path to the `.safetensors` file directly |
 | `MPS out of memory` | fp32 + SDXL 1024px exceeds 16 GB RAM | Use `resolution = "768,768"` |
 | `No data found` | `train_data_dir` points to image folder, not parent | Set `train_data_dir` to parent of `5_auri_v1/` |
+| `no kernel image is available for execution` | torch build has no sm_120 kernels (RTX 50-series) | Use torch 2.7.1+cu128 (pinned in `pyproject.toml`) |
+| `UnicodeEncodeError` on emoji (Windows) | cp1252 console | `PYTHONUTF8=1`; `generate.py` also reconfigures its streams |
+| `unrecognized arguments: --output_dir` | `train_lora.py` extra args are not passed as flags | Put the setting in a copy of the toml |
+| `FileNotFoundError` mid-training | images were moved/deleted while training | Train from an immutable snapshot, not the live folder |
+| `CUDA error: out of memory` during generation | another app holds GPU memory | Close GPU apps; VAE slicing/tiling is already on |
+| Prompt details have no effect | SDXL text encoders read only 77 tokens each | Put the detail first; check with `count_tokens` in `prompt_builder.py` |
 | `403 Forbidden` on Instagram | Session cookie expired or not logged in | Re-run `--extract-cookies` |
 | `0 images found` on site | Site uses JavaScript rendering | Default Playwright mode handles this automatically |
