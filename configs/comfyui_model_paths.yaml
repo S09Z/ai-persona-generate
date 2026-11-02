@@ -1,0 +1,11 @@
+# Points ComfyUI at the models this project already has, so nothing is downloaded twice.
+# Paths are relative to this file. Used by scripts/comfyui.ps1 via --extra-model-paths-config.
+project:
+  base_path: ../models
+  checkpoints: |
+    checkpoints
+    checkpoints/RealVisXL_V4.0
+  loras: loras
+  controlnet: controlnet
+  ipadapter: ip_adapter/sdxl_models
+  clip_vision: ip_adapter/models/image_encoder
