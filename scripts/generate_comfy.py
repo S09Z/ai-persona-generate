@@ -187,8 +187,8 @@ def main() -> None:
     ap.add_argument("--face-pass", action="store_true",
                     help="re-render the head at 1024px with a strong IP-Adapter and blend it back (fixes small, "
                          "off-model faces and eye colour); skipped for back views")
-    ap.add_argument("--face-ip", type=float, default=0.85, help="IP-Adapter weight in the face pass")
-    ap.add_argument("--face-denoise", type=float, default=0.45, help="how far the face pass may change the head")
+    ap.add_argument("--face-ip", type=float, default=0.6, help="IP-Adapter weight in the face pass")
+    ap.add_argument("--face-denoise", type=float, default=0.55, help="how far the face pass may change the head")
     ap.add_argument("--depth-end", type=float, default=0.6, help="stop the depth ControlNet at this fraction of steps")
     ap.add_argument("--steps", type=int, default=25)
     ap.add_argument("--cfg", type=float, default=6.0)
