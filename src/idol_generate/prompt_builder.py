@@ -206,7 +206,7 @@ CONTENT_CONFIGS: dict[str, dict] = {
         ],
     },
     "athleisure": {
-        "outfit": "fitted sand sports bra, high-waist taupe leggings",
+        "outfit": "fitted sand sports bra, high-waist taupe leggings, white sneakers",
         "poses": [
             "standing relaxed, hands at hips, slight side angle",
             "stretching arms overhead, calm expression",

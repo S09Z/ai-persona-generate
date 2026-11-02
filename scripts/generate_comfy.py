@@ -46,6 +46,8 @@ from ref_sheet_comfy import upload  # noqa: E402
 
 SIZE = (832, 1216)
 # Without this the model frames the shot at thigh/shin level and ignores the skeleton's legs
+# The model leans toward pink/terracotta walls for "warm"/"sand" palettes; push it to neutral
+WALL_NEGATIVE = ", pink wall, terracotta wall, orange color cast, red brick"
 FRAMING = "full-body photo, head to toe, shoes visible"
 FACE_CROP = (80, 20, 944, 884)
 POSES = {  # name -> (yaw, arms, IP-Adapter weight)
@@ -85,7 +87,8 @@ def build_workflow(post: dict, face: str, pose: str, *, seed: int, steps: int, c
             "weight": ip_weight, "weight_type": "linear", "combine_embeds": "concat",
             "start_at": 0.0, "end_at": 1.0, "embeds_scaling": "V only"}},
         "6": encode(post["prompt_2"], post["prompt"]),
-        "7": encode(post["negative_prompt"] + EXTRA_NEGATIVE, post["negative_prompt"] + EXTRA_NEGATIVE),
+        "7": encode(post["negative_prompt"] + EXTRA_NEGATIVE + WALL_NEGATIVE,
+                post["negative_prompt"] + EXTRA_NEGATIVE + WALL_NEGATIVE),
         "8": {"class_type": "ControlNetLoader",
               "inputs": {"control_net_name": "openpose-sdxl\diffusion_pytorch_model.safetensors"}},
         "9": {"class_type": "LoadImage", "inputs": {"image": pose}},
@@ -236,7 +239,7 @@ def main() -> None:
             a = character.appearance
             text = _pack([_phrases(a.face, 5), _phrases(a.eye_color, 1), "detailed eyes, natural skin texture"])
             stage1 = upload(f"namphueng_stage1_{stem}.png", (out / f"{stem}.png").read_bytes())
-            fwf = build_face_workflow(stage1, face, text, NEGATIVE_PROMPT + EXTRA_NEGATIVE, head_box(yaw),
+            fwf = build_face_workflow(stage1, face, text, NEGATIVE_PROMPT + EXTRA_NEGATIVE + WALL_NEGATIVE, head_box(yaw),
                                       seed=seed, steps=args.steps, cfg=args.cfg, ip_weight=args.face_ip,
                                       denoise=args.face_denoise, prefix=f"namphueng_face_{uuid.uuid4().hex[:6]}")
             fpid = cc._post("prompt", {"prompt": fwf})["prompt_id"]
