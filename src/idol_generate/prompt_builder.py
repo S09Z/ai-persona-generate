@@ -306,13 +306,14 @@ def _pack(parts: list[str], budget: int = CLIP_TOKEN_BUDGET) -> str:
 
 
 def build_image_prompt(
-    character: Character, content_type: ContentType, mood: str | None = None
+    character: Character, content_type: ContentType, mood: str | None = None, include_pose: bool = True
 ) -> tuple[str, str, str]:
     """Returns (prompt, prompt_2, negative_prompt) — SDXL dual-CLIP split.
 
     Each encoder reads only 77 tokens, so both prompts are packed in priority order and
     lower-priority details are dropped rather than silently truncated mid-phrase.
     Pass `mood` to reuse a mood already drawn for the caption/metadata.
+    `include_pose=False` leaves the pose phrase out, for backends where a skeleton sets the pose.
     """
     cfg = CONTENT_CONFIGS[content_type]
     a = character.appearance
@@ -336,7 +337,7 @@ def build_image_prompt(
     # CLIP-G (prompt_2): what she wears and does, where, light and mood first; quality tags last
     prompt_2 = _pack([
         cfg.get("outfit", ""),
-        pose,
+        pose if include_pose else "",
         env,
         v.lighting,
         f"{mood} mood",
@@ -378,10 +379,10 @@ def build_tags(character: Character, content_type: ContentType) -> list[str]:
     return result
 
 
-def build_post(character: Character, content_type: ContentType) -> dict:
+def build_post(character: Character, content_type: ContentType, include_pose: bool = True) -> dict:
     # Single draw for mood so prompt and metadata stay consistent
     mood = random.choice(CONTENT_CONFIGS[content_type]["mood_tags"])
-    prompt, prompt_2, negative_prompt = build_image_prompt(character, content_type, mood)
+    prompt, prompt_2, negative_prompt = build_image_prompt(character, content_type, mood, include_pose)
     caption = build_caption(character, content_type)
     tags = build_tags(character, content_type)
     return {

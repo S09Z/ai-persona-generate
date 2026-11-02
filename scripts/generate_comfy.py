@@ -118,7 +118,7 @@ def main() -> None:
     for i in range(args.batch):
         pose_name = args.pose if args.pose != "auto" else AUTO_POSES[(base_seed + i) % len(AUTO_POSES)]
         random.seed(base_seed + i)  # prompt_builder draws pose/environment/mood from `random`
-        jobs.append((pose_name, base_seed + i, build_post(character, args.content_type)))
+        jobs.append((pose_name, base_seed + i, build_post(character, args.content_type, include_pose=False)))
 
     if args.dry_run:
         for pose_name, seed, post in jobs:

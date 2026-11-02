@@ -44,3 +44,15 @@ def test_mood_is_drawn_once():
         random.seed(seed)
         post = build_post(character, "minimalist")
         assert f"{post['mood']} mood" in post["prompt_2"]
+
+
+def test_include_pose_false_drops_the_pose_phrase():
+    character = Character.load("characters/model_001.json")
+    poses = CONTENT_CONFIGS["casual_cool"]["poses"]
+    for seed in range(5):
+        random.seed(seed)
+        _, with_pose, _ = build_image_prompt(character, "casual_cool")
+        random.seed(seed)
+        _, without_pose, _ = build_image_prompt(character, "casual_cool", include_pose=False)
+        assert any(p in with_pose for p in poses)
+        assert not any(p in without_pose for p in poses)

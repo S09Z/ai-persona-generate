@@ -86,8 +86,8 @@ ARM_STYLES = ("down", "hand_on_hip")
 # Proportions are a slim, petite adult; hips are slightly wider than the shoulders (84 vs 76 half-width) for a full-hip hourglass look.
 _BODY_3D = {
     0: (0, 190, 40), 1: (0, 292, 0),
-    2: (-84, 312, 0), 5: (84, 312, 0),
-    8: (-76, 640, 0), 11: (76, 640, 0),
+    2: (-80, 312, 0), 5: (80, 312, 0),
+    8: (-82, 640, 0), 11: (82, 640, 0),
     9: (-58, 887, 6), 12: (58, 887, 6),
     10: (-54, 1101, 0), 13: (54, 1101, 0),
     14: (-24, 168, 30), 15: (24, 168, 30),
