@@ -29,6 +29,7 @@ sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import requests  # noqa: E402
+from PIL import Image  # noqa: E402
 
 from idol_generate import comfyui_client as cc  # noqa: E402
 from idol_generate.prompt_builder import NEGATIVE_PROMPT, count_tokens  # noqa: E402
@@ -84,6 +85,9 @@ def main() -> None:
     ap.add_argument("--views", nargs="+", default=list(VIEWS), choices=list(VIEWS))
     ap.add_argument("--scale", type=float, default=0.4, help="IP-Adapter weight")
     ap.add_argument("--pose-scale", type=float, default=1.0, help="ControlNet strength")
+    ap.add_argument("--face-crop", default="80,20,944,884",
+                    help="left,top,right,bottom crop of the master face fed to the IP-Adapter, so clothing "
+                         "and backdrop are not copied; use 'none' for the whole image")
     ap.add_argument("--steps", type=int, default=25)
     ap.add_argument("--cfg", type=float, default=6.0)
     ap.add_argument("--size", type=int, default=1024)
@@ -96,7 +100,12 @@ def main() -> None:
 
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
-    face = upload("namphueng_master_face.png", MASTER.read_bytes())
+    ref = Image.open(MASTER).convert("RGB")
+    if args.face_crop != "none":
+        ref = ref.crop(tuple(int(v) for v in args.face_crop.split(",")))
+    buf = io.BytesIO()
+    ref.save(buf, format="PNG")
+    face = upload("namphueng_master_face.png", buf.getvalue())
 
     items: list[tuple[Path, str]] = []
     for name in args.views:

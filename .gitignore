@@ -50,7 +50,7 @@ ig_cookies.json
 
 # Generated candidate and evaluation images (keep only the locked master face, contact sheets and settings)
 characters/*/master_face/candidates*/
-characters/*/reference_sheet/*.png
+characters/*/reference_sheet*/*.png
 experiments/*/evaluation/*/
 logs/lora_*/
 !logs/lora_auri/
