@@ -63,8 +63,8 @@
 
   "character_bible": {
     "id": "MODEL_001",
-    "version": "0.3",
-    "status": "face_locked_master_face_pending",
+    "version": "0.4",
+    "status": "master_face_locked",
     "project": "Thai fashion AI influencer for affiliate fashion content",
     "locked_choices": {
       "face_shape": "soft_oval",
@@ -139,7 +139,7 @@
       "camera_angles"
     ],
     "pipeline_notes": [
-      "Next: generate Master Face + Character Reference Sheet, lock them, then build a synthetic dataset for a LoRA (no real-person photos)",
+      "Master Face locked: characters/model_001/master_face/master_face.png (seed 1007). Next: Character Reference Sheet, then a synthetic dataset for a LoRA (no real-person photos)",
       "Set lora.path and lora.trigger_word only after a LoRA is trained and chosen",
       "Disclose AI-generated imagery per platform rules (e.g. Shopee/Meta) before publishing"
     ]
