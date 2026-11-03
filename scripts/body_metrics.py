@@ -115,6 +115,7 @@ def measure(img: Image.Image) -> dict | None:
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("folder")
+    ap.add_argument("--suffix", default="face", help="measure *_<suffix>.png (face = before skin balance, final = after)")
     args = ap.parse_args()
 
     rows = []
@@ -124,10 +125,10 @@ def main() -> None:
         rgb = np.asarray(sheet)
         aw = arm_width(arm_mask(rgb, TARGET_ARM_BOX), TARGET_ARM_BOX)
         rows.append(("target", {"arm_face": aw / tf[0], "arm_px": aw * PANEL_SCALE, "face_px": tf[0] * PANEL_SCALE}))
-    for f in sorted(Path(args.folder).glob("*_face.png")):
+    for f in sorted(Path(args.folder).glob(f"*_{args.suffix}.png")):
         m = measure(Image.open(f).convert("RGB"))
         if m is not None:
-            rows.append((f.stem.split("_s")[-1].replace("_face", ""), m))
+            rows.append((f.stem.split("_s")[-1].replace(f"_{args.suffix}", ""), m))
 
     fmt = lambda v: " ".join(f"{x:5.1f}" for x in v) if v is not None else "-"
     print(f"{'image':8} {'arm/face':>8} {'arm px':>7} {'face px':>8}  {'cheek L a b':>17}  {'neck L a b':>17}  {'arm L a b':>17}  top-bot L")

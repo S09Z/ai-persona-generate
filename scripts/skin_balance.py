@@ -43,7 +43,8 @@ def skin_mask(rgb: np.ndarray, guide: np.ndarray, face: np.ndarray) -> np.ndarra
         return np.zeros(core.shape, bool)
     centre = np.median(ab[core], axis=0)
     near = np.linalg.norm(ab - centre, axis=-1) < 7.0
-    person = cv2.dilate(guide.astype("uint8"), np.ones((5, 5), np.uint8)).astype(bool)
+    # the guide arm is fattened by depth_from_target --arm-grow, so shrink it back to keep wall pixels out of the mask
+    person = cv2.erode(guide.astype("uint8"), np.ones((9, 9), np.uint8)).astype(bool)
     skin_L = (L > 45) & (L < 90)
     # Skin and the beige wall have almost the same chroma, so shapes come from the guide, not from colour:
     # right forearm and hand = the guide silhouette right of the body below the sleeve; raised left arm = the

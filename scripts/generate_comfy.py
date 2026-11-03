@@ -49,7 +49,10 @@ SIZE = (832, 1216)
 # The model leans toward pink/terracotta walls for "warm"/"sand" palettes; push it to neutral
 # also keeps the arms from coming out tanned next to a pale face
 WALL_NEGATIVE = (", pink wall, terracotta wall, orange color cast, red brick, "
-                 "tanned skin, dark arms, uneven skin tone")
+                 "tanned skin, dark arms, uneven skin tone, holding a phone, object in hand, "
+                 "torn sleeve, slit sleeve")
+# extra negatives per content type (appended to WALL_NEGATIVE in main)
+TYPE_NEGATIVE = {"boho_set": ", pants, trousers, wide-leg pants, shorts, split skirt"}
 # Face-pass eye wording (variant C of tune_skin_eyes.py): bluer eyes with ArcFace identity unchanged
 FACE_PASS_EYES = "(pale grey-blue eyes:1.3), clear light irises, detailed eyes, natural skin texture"
 FRAMING = "full-body photo, head to toe, shoes visible, fair even skin tone on face and arms"
@@ -210,6 +213,8 @@ def main() -> None:
     ap.add_argument("--dry-run", action="store_true", help="print the prompts and exit")
     args = ap.parse_args()
 
+    global WALL_NEGATIVE
+    WALL_NEGATIVE += TYPE_NEGATIVE.get(args.content_type, "")
     character = Character.load(ROOT / "characters" / f"{args.character}.json")
     base_seed = args.seed if args.seed is not None else random.randint(0, 2**31 - 1)
     jobs = []
