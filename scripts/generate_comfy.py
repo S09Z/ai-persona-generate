@@ -34,7 +34,7 @@ for _s in (sys.stdout, sys.stderr):
     if hasattr(_s, "reconfigure"):
         _s.reconfigure(encoding="utf-8", errors="replace")
 
-from PIL import Image  # noqa: E402
+from PIL import Image, ImageOps  # noqa: E402
 
 from idol_generate import comfyui_client as cc  # noqa: E402
 from idol_generate.character import Character  # noqa: E402
@@ -192,6 +192,8 @@ def main() -> None:
     ap.add_argument("--no-skin-balance", action="store_true",
                     help="with --depth-image, skip matching the arms, hands and neck to the face tone "
                          "(skin_balance.py); the balanced result is saved as <stem>_final.png")
+    ap.add_argument("--guide-flipped", action="store_true",
+                    help="the --depth-image was made with depth_from_target.py --flip: mirror it for the skin balance")
     ap.add_argument("--depth-hip", type=float, default=1.0, help="scale the hip width of the depth body")
     ap.add_argument("--depth-waist", type=float, default=1.0, help="scale the waist width of the depth body")
     ap.add_argument("--face-pass", action="store_true",
@@ -273,7 +275,12 @@ def main() -> None:
             from skin_balance import balance
             src = post.get("image_face_pass", f"{stem}.png")
             guide = np.asarray(Image.open(args.depth_image).convert("L")) > 75
-            res = balance(Image.open(out / src).convert("RGB"), guide)
+            img = Image.open(out / src).convert("RGB")
+            if args.guide_flipped:  # skin_balance's geometry is for the unflipped guide: mirror, balance, mirror back
+                img, guide = ImageOps.mirror(img), guide[:, ::-1].copy()
+            res = balance(img, guide)
+            if res is not None and args.guide_flipped:
+                res = (ImageOps.mirror(res[0]), *res[1:])
             if res is None:
                 print("note: skin balance skipped (no face or skin found)")
             else:
