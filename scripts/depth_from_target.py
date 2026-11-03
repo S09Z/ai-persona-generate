@@ -38,7 +38,25 @@ def shrink_head(arr: np.ndarray, scale: float, cx: int, cy: int) -> np.ndarray:
     return cv2.remap(arr, mx, my, cv2.INTER_LINEAR, borderMode=cv2.BORDER_REPLICATE)
 
 
-ARM_BOXES = ((525, 200, 625, 540), (270, 130, 355, 340))  # right arm, raised left arm on the 832x1216 canvas
+def widen_shoulders(arr: np.ndarray, scale: float, cx: int = 430, y0: int = 215, y1: int = 330) -> np.ndarray:
+    """Stretch the rows y0..y1 (shoulders and upper chest) sideways about cx, fading in and out over 40 rows."""
+    h, w = arr.shape
+    yy, xx = np.mgrid[0:h, 0:w].astype("float32")
+    fade = np.clip(np.minimum(yy - (y0 - 40), (y1 + 40) - yy) / 40.0, 0, 1)
+    s = 1 + (scale - 1) * fade
+    return cv2.remap(arr, cx + (xx - cx) / s, yy, cv2.INTER_LINEAR, borderMode=cv2.BORDER_REPLICATE)
+
+
+def boost_bust(arr: np.ndarray, amount: int, centres=((398, 305), (478, 305)), sigma: float = 32.0) -> np.ndarray:
+    """Add two soft bumps to the depth on the chest so the bust reads fuller."""
+    h, w = arr.shape
+    yy, xx = np.mgrid[0:h, 0:w].astype("float32")
+    bump = sum(np.exp(-((xx - x) ** 2 + (yy - y) ** 2) / (2 * sigma ** 2)) for x, y in centres)
+    out = arr.astype("float32") + amount * bump * (arr > 100)
+    return np.clip(out, 0, 255).astype(arr.dtype)
+
+
+ARM_BOXES =((525, 200, 625, 540), (270, 130, 355, 340))  # right arm, raised left arm on the 832x1216 canvas
 
 
 def grow_arms(arr: np.ndarray, px: int) -> np.ndarray:
@@ -63,9 +81,11 @@ def main() -> None:
     ap.add_argument("--edge-px", type=int, default=6, help="width of the side strips that sample the floor depth")
     ap.add_argument("--floor-margin", type=float, default=0.08, help="how far above the floor depth the person starts")
     ap.add_argument("--flat-bg-value", type=float, default=0.2, help="constant depth for the background")
-    ap.add_argument("--head-scale", type=float, default=0.88,
+    ap.add_argument("--head-scale", type=float, default=0.8,
                     help="scale the head and hair in the depth map about the neck (0.9 = 10%% smaller)")
     ap.add_argument("--arm-grow", type=int, default=4, help="fatten the arms in the depth map by about this many pixels")
+    ap.add_argument("--shoulder-scale", type=float, default=1.08, help="widen the shoulders and upper chest sideways")
+    ap.add_argument("--bust-boost", type=int, default=20, help="depth added on the chest (0-255 scale, try 15-25)")
     ap.add_argument("--neck-x", type=int, default=430, help="neck anchor on the 832x1216 canvas")
     ap.add_argument("--neck-y", type=int, default=240)
     args = ap.parse_args()
@@ -96,6 +116,10 @@ def main() -> None:
     arr = np.pad(arr, ((0, 0), (left, pad - left)), mode="edge")
     if args.head_scale != 1.0:
         arr = shrink_head(arr, args.head_scale, args.neck_x, args.neck_y)
+    if args.shoulder_scale != 1.0:
+        arr = widen_shoulders(arr, args.shoulder_scale)
+    if args.bust_boost:
+        arr = boost_bust(arr, args.bust_boost)
     if args.arm_grow:
         arr = grow_arms(arr, args.arm_grow)
     Image.fromarray(arr).convert("RGB").save(args.out)
