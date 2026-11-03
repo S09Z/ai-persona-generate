@@ -47,10 +47,12 @@ from ref_sheet_comfy import upload  # noqa: E402
 SIZE = (832, 1216)
 # Without this the model frames the shot at thigh/shin level and ignores the skeleton's legs
 # The model leans toward pink/terracotta walls for "warm"/"sand" palettes; push it to neutral
-WALL_NEGATIVE = ", pink wall, terracotta wall, orange color cast, red brick"
+# also keeps the arms from coming out tanned next to a pale face
+WALL_NEGATIVE = (", pink wall, terracotta wall, orange color cast, red brick, "
+                 "tanned skin, dark arms, uneven skin tone")
 # Face-pass eye wording (variant C of tune_skin_eyes.py): bluer eyes with ArcFace identity unchanged
 FACE_PASS_EYES = "(pale grey-blue eyes:1.3), clear light irises, detailed eyes, natural skin texture"
-FRAMING = "full-body photo, head to toe, shoes visible"
+FRAMING = "full-body photo, head to toe, shoes visible, fair even skin tone on face and arms"
 FACE_CROP = (80, 20, 944, 884)
 POSES = {  # name -> (yaw, arms, IP-Adapter weight)
     "front": (0, "down", 0.6),
