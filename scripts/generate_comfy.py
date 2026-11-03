@@ -189,6 +189,9 @@ def main() -> None:
     ap.add_argument("--depth-image", default=None,
                     help="use this 832x1216 depth map (see depth_from_target.py) instead of the drawn body; "
                          "needs --depth > 0 and turns OpenPose off so the depth map alone sets pose and shape")
+    ap.add_argument("--no-skin-balance", action="store_true",
+                    help="with --depth-image, skip matching the arms, hands and neck to the face tone "
+                         "(skin_balance.py); the balanced result is saved as <stem>_final.png")
     ap.add_argument("--depth-hip", type=float, default=1.0, help="scale the hip width of the depth body")
     ap.add_argument("--depth-waist", type=float, default=1.0, help="scale the waist width of the depth body")
     ap.add_argument("--face-pass", action="store_true",
@@ -259,6 +262,18 @@ def main() -> None:
             if fimgs:
                 cc.download_image(fimgs[0], out / f"{stem}_face.png")
                 post["image_face_pass"] = f"{stem}_face.png"
+        if args.depth_image and not args.no_skin_balance:
+            # the depth guide fixes where the arms are, so their skin can be matched to the face
+            import numpy as np
+            from skin_balance import balance
+            src = post.get("image_face_pass", f"{stem}.png")
+            guide = np.asarray(Image.open(args.depth_image).convert("L")) > 75
+            res = balance(Image.open(out / src).convert("RGB"), guide)
+            if res is None:
+                print("note: skin balance skipped (no face or skin found)")
+            else:
+                res[0].save(out / f"{stem}_final.png")
+                post["image_final"] = f"{stem}_final.png"
         post.update(seed=seed, pose=pose_name, ip_weight=ipw, image=f"{stem}.png")
         (out / f"{stem}.json").write_text(json.dumps(post, indent=2, ensure_ascii=False), encoding="utf-8")
         print(f"saved {out / (stem + '.png')} ({time.monotonic() - t0:.0f}s) | {post['caption']}", flush=True)
