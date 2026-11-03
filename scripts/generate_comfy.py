@@ -198,6 +198,7 @@ def main() -> None:
     ap.add_argument("--guide-flipped", action="store_true",
                     help="the --depth-image was made with depth_from_target.py --flip: mirror it for the skin balance")
     ap.add_argument("--depth-hip", type=float, default=1.0, help="scale the hip width of the depth body")
+    ap.add_argument("--depth-shoulder", type=float, default=1.0, help="scale the shoulder and bust width of the depth body")
     ap.add_argument("--depth-waist", type=float, default=1.0, help="scale the waist width of the depth body")
     ap.add_argument("--face-pass", action="store_true",
                     help="re-render the head at 1024px with a strong IP-Adapter and blend it back (fixes small, "
@@ -245,7 +246,7 @@ def main() -> None:
                 sys.exit("--depth-image needs --depth > 0")
             depth_name = upload("namphueng_depth_target.png", Path(args.depth_image).read_bytes())
         elif args.depth > 0 and yaw in (0, 180):
-            depth_name = upload("namphueng_body_depth.png", png(hourglass_depth(SIZE, waist=args.depth_waist, hip=args.depth_hip)))
+            depth_name = upload("namphueng_body_depth.png", png(hourglass_depth(SIZE, waist=args.depth_waist, hip=args.depth_hip, shoulder=args.depth_shoulder)))
         elif args.depth > 0:
             print(f"note: --depth skipped for pose {pose_name} (front/back only)")
         wf = build_workflow(post, face, pose, seed=seed, steps=args.steps, cfg=args.cfg, ip_weight=ipw,

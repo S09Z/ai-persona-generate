@@ -33,8 +33,8 @@ def _interp(table: list[tuple[float, float]], y: float) -> float:
     return float(np.interp(y, ys, vs))
 
 
-def hourglass_depth(size: tuple[int, int] = (832, 1216), waist: float = 1.0, hip: float = 1.0) -> Image.Image:
-    """`waist` and `hip` scale the half-width at those heights (1.0 = default hourglass)."""
+def hourglass_depth(size: tuple[int, int] = (832, 1216), waist: float = 1.0, hip: float = 1.0, shoulder: float = 1.0) -> Image.Image:
+    """`waist`, `hip` and `shoulder` (shoulders and bust, y up to 460) scale the half-width at those heights (1.0 = default)."""
     w, h = size
     s = h / 1216
     cx = w / 2
@@ -45,7 +45,9 @@ def hourglass_depth(size: tuple[int, int] = (832, 1216), waist: float = 1.0, hip
         parts = []
         if TORSO[0][0] <= y <= TORSO[-1][0]:
             k = 1.0
-            if 480 <= y <= 560:
+            if y <= 460:
+                k = shoulder
+            elif 480 <= y <= 560:
                 k = waist
             elif y >= 600:
                 k = hip
