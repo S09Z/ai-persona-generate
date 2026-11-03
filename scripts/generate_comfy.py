@@ -197,8 +197,10 @@ def main() -> None:
     ap.add_argument("--face-pass", action="store_true",
                     help="re-render the head at 1024px with a strong IP-Adapter and blend it back (fixes small, "
                          "off-model faces and eye colour); skipped for back views")
-    ap.add_argument("--face-ip", type=float, default=0.6, help="IP-Adapter weight in the face pass")
-    ap.add_argument("--face-denoise", type=float, default=0.55, help="how far the face pass may change the head")
+    ap.add_argument("--face-ip", type=float, default=None,
+                    help="IP-Adapter weight in the face pass (default 0.6; 0.35 for turned poses so the head can turn)")
+    ap.add_argument("--face-denoise", type=float, default=None,
+                    help="how far the face pass may change the head (default 0.55; 0.4 for turned poses)")
     ap.add_argument("--depth-end", type=float, default=0.6, help="stop the depth ControlNet at this fraction of steps")
     ap.add_argument("--steps", type=int, default=25)
     ap.add_argument("--cfg", type=float, default=6.0)
@@ -254,9 +256,12 @@ def main() -> None:
             a = character.appearance
             text = _pack([_phrases(a.face, 5), FACE_PASS_EYES])
             stage1 = upload(f"namphueng_stage1_{stem}.png", (out / f"{stem}.png").read_bytes())
+            turned = yaw not in (0, 180)
+            face_ip = args.face_ip if args.face_ip is not None else (0.35 if turned else 0.6)
+            face_denoise = args.face_denoise if args.face_denoise is not None else (0.4 if turned else 0.55)
             fwf = build_face_workflow(stage1, face, text, NEGATIVE_PROMPT + EXTRA_NEGATIVE + WALL_NEGATIVE, head_box(yaw),
-                                      seed=seed, steps=args.steps, cfg=args.cfg, ip_weight=args.face_ip,
-                                      denoise=args.face_denoise, prefix=f"namphueng_face_{uuid.uuid4().hex[:6]}")
+                                      seed=seed, steps=args.steps, cfg=args.cfg, ip_weight=face_ip,
+                                      denoise=face_denoise, prefix=f"namphueng_face_{uuid.uuid4().hex[:6]}")
             fpid = cc._post("prompt", {"prompt": fwf})["prompt_id"]
             fimgs = cc.wait_for_result(fpid, timeout=900)
             if fimgs:
