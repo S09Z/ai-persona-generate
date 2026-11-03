@@ -49,7 +49,7 @@ def main() -> None:
     ap.add_argument("--edge-px", type=int, default=6, help="width of the side strips that sample the floor depth")
     ap.add_argument("--floor-margin", type=float, default=0.08, help="how far above the floor depth the person starts")
     ap.add_argument("--flat-bg-value", type=float, default=0.2, help="constant depth for the background")
-    ap.add_argument("--head-scale", type=float, default=1.0,
+    ap.add_argument("--head-scale", type=float, default=0.88,
                     help="scale the head and hair in the depth map about the neck (0.9 = 10%% smaller)")
     ap.add_argument("--neck-x", type=int, default=430, help="neck anchor on the 832x1216 canvas")
     ap.add_argument("--neck-y", type=int, default=240)
