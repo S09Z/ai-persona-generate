@@ -189,8 +189,8 @@ CONTENT_CONFIGS: dict[str, dict] = {
         ],
     },
     "boho_set": {
-        "outfit": ("white off-shoulder crop top with tiered ruffle bell sleeves, "
-                   "long full cream tiered cotton maxi skirt to the ankles, crochet lace waistband, tan sandals"),
+        "outfit": ("plain white cotton off-shoulder crop top, wide flounce and long bell sleeves, "
+                   "wide flared cream tiered gauze maxi skirt to the ankles, knit waistband, tan sandals"),
         "poses": [
             "standing, holding the skirt out with one hand, soft smile",
             "standing relaxed, small white bag in one hand, gentle look at camera",
