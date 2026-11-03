@@ -38,6 +38,20 @@ def shrink_head(arr: np.ndarray, scale: float, cx: int, cy: int) -> np.ndarray:
     return cv2.remap(arr, mx, my, cv2.INTER_LINEAR, borderMode=cv2.BORDER_REPLICATE)
 
 
+ARM_BOXES = ((525, 200, 625, 540), (270, 130, 355, 340))  # right arm, raised left arm on the 832x1216 canvas
+
+
+def grow_arms(arr: np.ndarray, px: int) -> np.ndarray:
+    """Fatten the arms by about px pixels: a max filter inside feathered boxes around them."""
+    from scipy.ndimage import gaussian_filter
+    grown = cv2.dilate(arr, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2 * px + 1, 2 * px + 1)))
+    w = np.zeros(arr.shape, "float32")
+    for x0, y0, x1, y1 in ARM_BOXES:
+        w[y0:y1, x0:x1] = 1
+    w = gaussian_filter(w, 8)
+    return (arr * (1 - w) + grown * w).astype(arr.dtype)
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--sheet", default=str(ROOT / "characters/model_001/target/sora_sheet.png"))
@@ -51,6 +65,7 @@ def main() -> None:
     ap.add_argument("--flat-bg-value", type=float, default=0.2, help="constant depth for the background")
     ap.add_argument("--head-scale", type=float, default=0.88,
                     help="scale the head and hair in the depth map about the neck (0.9 = 10%% smaller)")
+    ap.add_argument("--arm-grow", type=int, default=4, help="fatten the arms in the depth map by about this many pixels")
     ap.add_argument("--neck-x", type=int, default=430, help="neck anchor on the 832x1216 canvas")
     ap.add_argument("--neck-y", type=int, default=240)
     args = ap.parse_args()
@@ -81,6 +96,8 @@ def main() -> None:
     arr = np.pad(arr, ((0, 0), (left, pad - left)), mode="edge")
     if args.head_scale != 1.0:
         arr = shrink_head(arr, args.head_scale, args.neck_x, args.neck_y)
+    if args.arm_grow:
+        arr = grow_arms(arr, args.arm_grow)
     Image.fromarray(arr).convert("RGB").save(args.out)
     print(f"saved {args.out}")
 
