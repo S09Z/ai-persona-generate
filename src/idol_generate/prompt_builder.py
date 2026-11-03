@@ -15,7 +15,7 @@ from .character import Character
 ContentType = Literal[
     "daily_life", "fashion", "selfie", "story",
     "minimalist", "modern_executive", "soft_elegant", "evening_muse", "athleisure",
-    "casual_cool", "tomboy_chic",
+    "casual_cool", "tomboy_chic", "boho_set",
 ]
 
 # Each SDXL text encoder reads at most 77 tokens (2 are BOS/EOS); anything past that is dropped.
@@ -186,6 +186,24 @@ CONTENT_CONFIGS: dict[str, dict] = {
         "caption_hooks": [
             "tee, jeans, done {hook}",
             "no plan, just good light {hook}",
+        ],
+    },
+    "boho_set": {
+        "outfit": ("white off-shoulder crop top with tiered ruffle bell sleeves, "
+                   "long full cream tiered cotton maxi skirt to the ankles, crochet lace waistband, tan sandals"),
+        "poses": [
+            "standing, holding the skirt out with one hand, soft smile",
+            "standing relaxed, small white bag in one hand, gentle look at camera",
+            "turning slightly, skirt swaying, calm expression",
+        ],
+        "environments": [
+            "bright white interior with wood floor, soft window light",
+            "airy boutique room, white walls, warm daylight",
+        ],
+        "mood_tags": ["soft", "airy", "feminine", "bohemian"],
+        "caption_hooks": [
+            "boho mood, all white {hook}",
+            "soft layers, slow day {hook}",
         ],
     },
     "tomboy_chic": {
