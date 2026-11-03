@@ -31,6 +31,10 @@ def main() -> None:
     ap.add_argument("--sheet", default=str(ROOT / "characters/model_001/target/sora_sheet.png"))
     ap.add_argument("--box", default="0,0,522,1536", help="left,top,right,bottom of the full-body panel")
     ap.add_argument("--out", default=str(ROOT / "characters/model_001/target/depth_walk.png"))
+    ap.add_argument("--no-flat-bg", dest="flat_bg", action="store_false",
+                    help="keep the estimated background depth (it gets copied as scenery)")
+    ap.add_argument("--person-level", type=float, default=0.5, help="depth above this counts as the person")
+    ap.add_argument("--flat-bg-value", type=float, default=0.2, help="constant depth for the background")
     args = ap.parse_args()
 
     img = Image.open(args.sheet).convert("RGB").crop(tuple(int(v) for v in args.box.split(",")))
@@ -40,6 +44,10 @@ def main() -> None:
         out = model(**proc(images=img, return_tensors="pt")).predicted_depth
     d = torch.nn.functional.interpolate(out[None], size=img.size[::-1], mode="bicubic")[0, 0].numpy()
     d = (d - d.min()) / (d.max() - d.min())
+    if args.flat_bg:  # the street behind her would otherwise be copied as stairs and pillars
+        from scipy.ndimage import gaussian_filter
+        person = gaussian_filter((d > args.person_level).astype("float32"), 6)
+        d = d * person + args.flat_bg_value * (1 - person)
     depth = Image.fromarray((d * 255).astype("uint8"))
 
     w, h = SIZE
