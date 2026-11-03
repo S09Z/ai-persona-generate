@@ -34,6 +34,8 @@ def main() -> None:
     ap.add_argument("--no-flat-bg", dest="flat_bg", action="store_false",
                     help="keep the estimated background depth (it gets copied as scenery)")
     ap.add_argument("--person-level", type=float, default=0.5, help="depth above this counts as the person")
+    ap.add_argument("--edge-px", type=int, default=6, help="width of the side strips that sample the floor depth")
+    ap.add_argument("--floor-margin", type=float, default=0.08, help="how far above the floor depth the person starts")
     ap.add_argument("--flat-bg-value", type=float, default=0.2, help="constant depth for the background")
     args = ap.parse_args()
 
@@ -46,7 +48,12 @@ def main() -> None:
     d = (d - d.min()) / (d.max() - d.min())
     if args.flat_bg:  # the street behind her would otherwise be copied as stairs and pillars
         from scipy.ndimage import gaussian_filter
-        person = gaussian_filter((d > args.person_level).astype("float32"), 6)
+        # the floor gets nearer (brighter) towards the bottom: take its depth per row from the panel's side
+        # edges, where only floor is visible, and call "person" what stands out from it
+        edge = np.concatenate([d[:, :args.edge_px], d[:, -args.edge_px:]], axis=1)
+        floor = gaussian_filter(np.median(edge, axis=1), 15)
+        level = np.maximum(args.person_level, floor + args.floor_margin)[:, None]
+        person = gaussian_filter((d > level).astype("float32"), 6)
         d = d * person + args.flat_bg_value * (1 - person)
     depth = Image.fromarray((d * 255).astype("uint8"))
 
