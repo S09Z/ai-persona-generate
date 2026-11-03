@@ -16,6 +16,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
+import cv2
 import numpy as np
 import torch
 from PIL import Image
@@ -24,6 +25,17 @@ from transformers import AutoImageProcessor, AutoModelForDepthEstimation
 ROOT = Path(__file__).resolve().parent.parent
 MODEL = ROOT / "models/depth/depth-anything-v2-small"
 SIZE = (832, 1216)
+
+
+def shrink_head(arr: np.ndarray, scale: float, cx: int, cy: int) -> np.ndarray:
+    """Scale the rows above the neck about (cx, cy); the effect fades out between cy and cy + 80."""
+    h, w = arr.shape
+    yy, xx = np.mgrid[0:h, 0:w].astype("float32")
+    fade = np.clip(1 - (yy - cy) / 80.0, 0, 1)
+    s = 1 + (scale - 1) * fade
+    mx = cx + (xx - cx) / s
+    my = cy + (yy - cy) / s
+    return cv2.remap(arr, mx, my, cv2.INTER_LINEAR, borderMode=cv2.BORDER_REPLICATE)
 
 
 def main() -> None:
@@ -37,9 +49,13 @@ def main() -> None:
     ap.add_argument("--edge-px", type=int, default=6, help="width of the side strips that sample the floor depth")
     ap.add_argument("--floor-margin", type=float, default=0.08, help="how far above the floor depth the person starts")
     ap.add_argument("--flat-bg-value", type=float, default=0.2, help="constant depth for the background")
+    ap.add_argument("--head-scale", type=float, default=1.0,
+                    help="scale the head and hair in the depth map about the neck (0.9 = 10%% smaller)")
+    ap.add_argument("--neck-x", type=int, default=430, help="neck anchor on the 832x1216 canvas")
+    ap.add_argument("--neck-y", type=int, default=240)
     args = ap.parse_args()
 
-    img = Image.open(args.sheet).convert("RGB").crop(tuple(int(v) for v in args.box.split(",")))
+    img =Image.open(args.sheet).convert("RGB").crop(tuple(int(v) for v in args.box.split(",")))
     proc = AutoImageProcessor.from_pretrained(MODEL)
     model = AutoModelForDepthEstimation.from_pretrained(MODEL).eval()
     with torch.no_grad():
@@ -63,6 +79,8 @@ def main() -> None:
     pad = w - arr.shape[1]
     left = pad // 2
     arr = np.pad(arr, ((0, 0), (left, pad - left)), mode="edge")
+    if args.head_scale != 1.0:
+        arr = shrink_head(arr, args.head_scale, args.neck_x, args.neck_y)
     Image.fromarray(arr).convert("RGB").save(args.out)
     print(f"saved {args.out}")
 
