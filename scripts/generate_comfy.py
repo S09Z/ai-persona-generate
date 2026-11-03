@@ -70,7 +70,7 @@ AUTO_POSES = ["front", "front_hip", "three_quarter", "three_quarter_hip", "three
 
 def build_workflow(post: dict, face: str, pose: str, *, seed: int, steps: int, cfg: float,
                    ip_weight: float, prefix: str, depth: str | None = None, depth_strength: float = 0.0,
-                   depth_end: float = 0.6) -> dict:
+                   depth_end: float = 0.6, pose_strength: float = 1.0) -> dict:
     w, h = SIZE
 
     def encode(g: str, l: str) -> dict:
@@ -96,7 +96,7 @@ def build_workflow(post: dict, face: str, pose: str, *, seed: int, steps: int, c
         "9": {"class_type": "LoadImage", "inputs": {"image": pose}},
         "10": {"class_type": "ControlNetApplyAdvanced", "inputs": {
             "positive": ["6", 0], "negative": ["7", 0], "control_net": ["8", 0], "image": ["9", 0],
-            "strength": 1.0, "start_percent": 0.0, "end_percent": 1.0, "vae": ["1", 2]}},
+            "strength": pose_strength, "start_percent": 0.0, "end_percent": 1.0, "vae": ["1", 2]}},
         "11": {"class_type": "EmptyLatentImage", "inputs": {"width": w, "height": h, "batch_size": 1}},
         "12": {"class_type": "KSampler", "inputs": {
             "model": ["5", 0], "positive": ["10", 0], "negative": ["10", 1], "latent_image": ["11", 0],
@@ -184,6 +184,9 @@ def main() -> None:
     ap.add_argument("--depth", type=float, default=0.0,
                     help="strength of the hourglass body-volume depth ControlNet (0 = off; try 0.4-0.7); "
                          "front and back poses only, the silhouette is not rotated")
+    ap.add_argument("--depth-image", default=None,
+                    help="use this 832x1216 depth map (see depth_from_target.py) instead of the drawn body; "
+                         "needs --depth > 0 and turns OpenPose off so the depth map alone sets pose and shape")
     ap.add_argument("--depth-hip", type=float, default=1.0, help="scale the hip width of the depth body")
     ap.add_argument("--depth-waist", type=float, default=1.0, help="scale the waist width of the depth body")
     ap.add_argument("--face-pass", action="store_true",
@@ -223,13 +226,18 @@ def main() -> None:
         yaw, arms, ipw = POSES[pose_name]
         pose = upload(f"namphueng_pose_{pose_name}.png", png(body_pose(yaw, arms, SIZE)))
         depth_name = None
-        if args.depth > 0 and yaw in (0, 180):
+        if args.depth_image:
+            if args.depth <= 0:
+                sys.exit("--depth-image needs --depth > 0")
+            depth_name = upload("namphueng_depth_target.png", Path(args.depth_image).read_bytes())
+        elif args.depth > 0 and yaw in (0, 180):
             depth_name = upload("namphueng_body_depth.png", png(hourglass_depth(SIZE, waist=args.depth_waist, hip=args.depth_hip)))
         elif args.depth > 0:
             print(f"note: --depth skipped for pose {pose_name} (front/back only)")
         wf = build_workflow(post, face, pose, seed=seed, steps=args.steps, cfg=args.cfg, ip_weight=ipw,
                             prefix=f"namphueng_{uuid.uuid4().hex[:6]}", depth=depth_name,
-                            depth_strength=args.depth, depth_end=args.depth_end)
+                            depth_strength=args.depth, depth_end=args.depth_end,
+                            pose_strength=0.0 if args.depth_image else 1.0)
         t0 = time.monotonic()
         pid = cc._post("prompt", {"prompt": wf})["prompt_id"]
         images = cc.wait_for_result(pid, timeout=900)
