@@ -86,6 +86,8 @@ def main() -> None:
     ap.add_argument("--arm-grow", type=int, default=4, help="fatten the arms in the depth map by about this many pixels")
     ap.add_argument("--shoulder-scale", type=float, default=1.08, help="widen the shoulders and upper chest sideways")
     ap.add_argument("--bust-boost", type=int, default=20, help="depth added on the chest (0-255 scale, try 15-25)")
+    ap.add_argument("--flip", action="store_true",
+                    help="mirror the guide (a second pose facing the other way; use --no-skin-balance with it)")
     ap.add_argument("--neck-x", type=int, default=430, help="neck anchor on the 832x1216 canvas")
     ap.add_argument("--neck-y", type=int, default=240)
     args = ap.parse_args()
@@ -122,6 +124,8 @@ def main() -> None:
         arr = boost_bust(arr, args.bust_boost)
     if args.arm_grow:
         arr = grow_arms(arr, args.arm_grow)
+    if args.flip:
+        arr = arr[:, ::-1].copy()
     Image.fromarray(arr).convert("RGB").save(args.out)
     print(f"saved {args.out}")
 
