@@ -83,13 +83,13 @@ def head_pose(yaw_deg: float, size: int = 1024) -> Image.Image:
 ARM_STYLES = ("down", "hand_on_hip")
 
 # Standing figure in a 1216 px tall frame: (x right of the body centre, y from top, z forward).
-# Proportions are a slim, petite adult; hips are as wide as the shoulders for an hourglass look.
+# Proportions are a slim, petite adult; hips are slightly wider than the shoulders (84 vs 76 half-width) for a full-hip hourglass look.
 _BODY_3D = {
     0: (0, 190, 40), 1: (0, 292, 0),
-    2: (-88, 312, 0), 5: (88, 312, 0),
-    8: (-62, 640, 0), 11: (62, 640, 0),
-    9: (-58, 905, 6), 12: (58, 905, 6),
-    10: (-54, 1135, 0), 13: (54, 1135, 0),
+    2: (-80, 312, 0), 5: (80, 312, 0),
+    8: (-82, 640, 0), 11: (82, 640, 0),
+    9: (-58, 887, 6), 12: (58, 887, 6),
+    10: (-54, 1101, 0), 13: (54, 1101, 0),
     14: (-24, 168, 30), 15: (24, 168, 30),
     16: (-62, 186, -8), 17: (62, 186, -8),
 }

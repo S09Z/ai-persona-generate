@@ -1,0 +1,89 @@
+# ── LoRA training config for MODEL_001 v2 (RealVisXL_V4.0 / SDXL, Windows + RTX 5070 12GB) ──
+# Used by: uv run train_lora.py --config configs/lora_model_001_v2.toml
+#
+# Migrated from configs/lora_auri.toml (Mac/MPS era). Changes:
+#   resolution 768 -> 1024, sdpa attention, cached latents, AdamW8bit,
+#   clip_skip no longer forced, network_dropout/seed exposed for experiments.
+#
+# Trigger word : m001_v1
+# Persona      : characters/model_001.json
+#
+# steps/epoch = images x repeats / (batch x grad_accum)
+# total steps = steps/epoch x epochs  (check the "steps:" bar in the log)
+
+[general]
+enable_bucket          = true
+min_bucket_reso        = 512
+max_bucket_reso        = 1024
+bucket_reso_steps      = 64
+bucket_no_upscale      = false
+train_data_dir = "datasets/lora/model_001_snapshot_20261102b"
+
+[datasets]
+[[datasets.subsets]]
+image_dir         = "datasets/lora/model_001_snapshot_20261102b/5_m001_v1"
+caption_extension = ".txt"
+num_repeats       = 5
+
+# ── Model ─────────────────────────────────────────────────────────────────────
+[model]
+pretrained_model_name_or_path = "models/checkpoints/RealVisXL_V4.0/RealVisXL_V4.0.safetensors"
+v2                            = false
+v_parameterization            = false
+sdxl                          = true
+
+# ── Output ────────────────────────────────────────────────────────────────────
+[output]
+output_dir           = "models/loras"
+output_name          = "model_001_v2"
+save_model_as        = "safetensors"
+save_every_n_epochs  = 1
+character_json       = ""            # set only after choosing a winning checkpoint
+
+# ── Training hyperparameters ──────────────────────────────────────────────────
+[train]
+max_train_epochs            = 8
+train_batch_size            = 1
+resolution                  = "1024,1024"
+mixed_precision             = "bf16"
+optimizer_type              = "AdamW8bit"   # bitsandbytes 8-bit: less optimizer VRAM
+learning_rate               = 1e-4
+unet_lr                     = 1e-4
+text_encoder_lr             = 5e-5
+lr_scheduler                = "cosine_with_restarts"
+lr_warmup_steps             = 75
+lr_scheduler_num_cycles     = 3
+gradient_checkpointing      = true
+gradient_accumulation_steps = 2
+sdpa                        = true          # scaled-dot-product attention (kohya default is naive)
+full_bf16                   = true          # bf16 weights: ~half the UNet VRAM, faster steps
+cache_latents               = true
+cache_latents_to_disk       = true
+seed                        = 42
+# clip_skip                 = 2             # leave unset for SDXL unless testing it
+
+# ── LoRA network ──────────────────────────────────────────────────────────────
+[lora]
+network_module          = "networks.lora"
+network_dim             = 32
+network_alpha           = 16
+network_train_unet_only = false
+# network_dropout       = 0.10              # EXP-007 variable (control = unset)
+
+# ── Caption / augmentation ────────────────────────────────────────────────────
+[caption]
+shuffle_caption                 = true
+keep_tokens                     = 1             # m001_v1 always stays first
+caption_dropout_rate            = 0.05
+caption_dropout_every_n_epochs  = 4
+
+# ── Logging ───────────────────────────────────────────────────────────────────
+[logging]
+log_with     = "tensorboard"
+logging_dir  = "logs/lora_model_001_v2"
+
+# ── Sample preview images every N epochs ─────────────────────────────────────
+[sample]
+sample_every_n_epochs = 1
+sample_sampler = "euler_a"
+sample_prompts = "configs/sample_prompts_m001.txt"

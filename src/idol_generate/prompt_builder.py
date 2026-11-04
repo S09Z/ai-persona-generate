@@ -15,7 +15,7 @@ from .character import Character
 ContentType = Literal[
     "daily_life", "fashion", "selfie", "story",
     "minimalist", "modern_executive", "soft_elegant", "evening_muse", "athleisure",
-    "casual_cool", "tomboy_chic",
+    "casual_cool", "tomboy_chic", "boho_set",
 ]
 
 # Each SDXL text encoder reads at most 77 tokens (2 are BOS/EOS); anything past that is dropped.
@@ -188,6 +188,24 @@ CONTENT_CONFIGS: dict[str, dict] = {
             "no plan, just good light {hook}",
         ],
     },
+    "boho_set": {
+        "outfit": ("plain white cotton off-shoulder crop top, wide flounce and long bell sleeves, "
+                   "wide flared cream tiered gauze maxi skirt to the ankles, knit waistband, tan sandals"),
+        "poses": [
+            "standing, holding the skirt out with one hand, soft smile",
+            "standing relaxed, small white bag in one hand, gentle look at camera",
+            "turning slightly, skirt swaying, calm expression",
+        ],
+        "environments": [
+            "bright white interior with wood floor, soft window light",
+            "airy boutique room, white walls, warm daylight",
+        ],
+        "mood_tags": ["soft", "airy", "feminine", "bohemian"],
+        "caption_hooks": [
+            "boho mood, all white {hook}",
+            "soft layers, slow day {hook}",
+        ],
+    },
     "tomboy_chic": {
         "outfit": "cap, loose zip jacket, wide trousers, chunky sneakers, thin gold necklace",
         "poses": [
@@ -206,7 +224,7 @@ CONTENT_CONFIGS: dict[str, dict] = {
         ],
     },
     "athleisure": {
-        "outfit": "fitted sand sports bra, high-waist taupe leggings",
+        "outfit": "fitted sand sports bra, high-waist taupe leggings, white sneakers",
         "poses": [
             "standing relaxed, hands at hips, slight side angle",
             "stretching arms overhead, calm expression",
@@ -306,13 +324,16 @@ def _pack(parts: list[str], budget: int = CLIP_TOKEN_BUDGET) -> str:
 
 
 def build_image_prompt(
-    character: Character, content_type: ContentType, mood: str | None = None
+    character: Character, content_type: ContentType, mood: str | None = None, include_pose: bool = True,
+    framing: str = "",
 ) -> tuple[str, str, str]:
     """Returns (prompt, prompt_2, negative_prompt) — SDXL dual-CLIP split.
 
     Each encoder reads only 77 tokens, so both prompts are packed in priority order and
     lower-priority details are dropped rather than silently truncated mid-phrase.
     Pass `mood` to reuse a mood already drawn for the caption/metadata.
+    `include_pose=False` leaves the pose phrase out, for backends where a skeleton sets the pose.
+    `framing` (e.g. "full-body photo, head to toe") goes first in prompt_2 so it is never packed out.
     """
     cfg = CONTENT_CONFIGS[content_type]
     a = character.appearance
@@ -335,8 +356,9 @@ def build_image_prompt(
     ])
     # CLIP-G (prompt_2): what she wears and does, where, light and mood first; quality tags last
     prompt_2 = _pack([
+        framing,
         cfg.get("outfit", ""),
-        pose,
+        pose if include_pose else "",
         env,
         v.lighting,
         f"{mood} mood",
@@ -378,10 +400,14 @@ def build_tags(character: Character, content_type: ContentType) -> list[str]:
     return result
 
 
-def build_post(character: Character, content_type: ContentType) -> dict:
+def build_post(
+    character: Character, content_type: ContentType, include_pose: bool = True, framing: str = ""
+) -> dict:
     # Single draw for mood so prompt and metadata stay consistent
     mood = random.choice(CONTENT_CONFIGS[content_type]["mood_tags"])
-    prompt, prompt_2, negative_prompt = build_image_prompt(character, content_type, mood)
+    prompt, prompt_2, negative_prompt = build_image_prompt(
+        character, content_type, mood, include_pose, framing
+    )
     caption = build_caption(character, content_type)
     tags = build_tags(character, content_type)
     return {

@@ -1,0 +1,3 @@
+m001_v1, standing front view, white tee, high-waist jeans, white sneakers, beige wall, soft daylight --w 832 --h 1216 --s 25 --l 6 --d 42
+m001_v1, three-quarter view, relaxed half-smile, ivory knit top, cafe interior, warm window light --w 1024 --h 1024 --s 25 --l 6 --d 42
+m001_v1, back view, seen from behind, ivory shirt, sand trousers, plain beige wall --w 832 --h 1216 --s 25 --l 6 --d 42

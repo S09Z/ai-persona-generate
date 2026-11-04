@@ -1,0 +1,84 @@
+image,view,split,reason
+body_018_frontal,frontal,excluded,round-1 skeleton had over-long legs
+body_019_frontal,frontal,holdout,
+body_020_three_quarter,three_quarter,excluded,round-1 skeleton had over-long legs
+body_021_three_quarter,three_quarter,excluded,round-1 skeleton had over-long legs
+body_022_side,side,holdout,
+body_023_back,back,holdout,
+body_024_frontal,frontal,excluded,round-1 skeleton had over-long legs
+body_025_frontal,frontal,excluded,round-1 skeleton had over-long legs
+body_026_three_quarter,three_quarter,excluded,round-1 skeleton had over-long legs
+body_027_three_quarter,three_quarter,excluded,cropped top / midriff
+body_028_side,side,excluded,round-1 skeleton had over-long legs
+body_029_back,back,excluded,"bare feet, awkward pose"
+body_030_frontal,frontal,excluded,round-1 skeleton had over-long legs
+body_031_frontal,frontal,excluded,round-1 skeleton had over-long legs
+body_032_three_quarter,three_quarter,excluded,round-1 skeleton had over-long legs
+body_033_three_quarter,three_quarter,holdout,
+body_034_side,side,excluded,round-1 skeleton had over-long legs
+body_035_back,back,excluded,round-1 skeleton had over-long legs
+body_036_frontal,frontal,excluded,round-1 skeleton had over-long legs
+body_037_frontal,frontal,excluded,round-1 skeleton had over-long legs
+body_038_three_quarter,three_quarter,excluded,round-1 skeleton had over-long legs
+body_039_three_quarter,three_quarter,excluded,cropped top / midriff
+body_040_side,side,excluded,round-1 skeleton had over-long legs
+body_041_back,back,excluded,round-1 skeleton had over-long legs
+body_042_frontal,frontal,excluded,round-1 skeleton had over-long legs
+body_043_frontal,frontal,excluded,round-1 skeleton had over-long legs
+body_044_three_quarter,three_quarter,holdout,
+body_045_three_quarter,three_quarter,excluded,round-1 skeleton had over-long legs
+body_046_side,side,holdout,
+body_047_back,back,excluded,bare feet
+body_048_three_quarter,three_quarter,train,
+body_049_three_quarter,three_quarter,train,
+body_050_side,side,train,
+body_051_back,back,excluded,bed in scene
+body_052_frontal,frontal,train,
+body_053_three_quarter,three_quarter,train,
+body_054_three_quarter,three_quarter,train,
+body_055_side,side,train,
+body_056_back,back,train,
+body_057_frontal,frontal,train,
+body_058_three_quarter,three_quarter,train,
+body_059_three_quarter,three_quarter,holdout,
+body_060_side,side,train,
+body_061_back,back,train,
+body_062_frontal,frontal,train,
+body_063_three_quarter,three_quarter,excluded,cropped top / midriff
+body_064_three_quarter,three_quarter,train,
+body_065_side,side,train,
+body_066_back,back,train,
+body_067_frontal,frontal,train,
+body_068_three_quarter,three_quarter,excluded,cropped top / midriff
+body_069_three_quarter,three_quarter,train,
+body_070_side,side,holdout,
+body_071_back,back,train,
+crop_048_three_quarter,three_quarter,train,
+crop_049_three_quarter,three_quarter,train,
+crop_052_frontal,frontal,train,
+crop_053_three_quarter,three_quarter,train,
+crop_054_three_quarter,three_quarter,train,
+crop_057_frontal,frontal,train,
+crop_058_three_quarter,three_quarter,train,
+crop_062_frontal,frontal,train,
+crop_064_three_quarter,three_quarter,train,
+crop_067_frontal,frontal,train,
+crop_069_three_quarter,three_quarter,train,
+head_000_frontal,frontal,train,
+head_001_three_quarter,three_quarter,train,
+head_002_three_quarter,three_quarter,train,
+head_003_three_quarter,three_quarter,holdout,
+head_004_three_quarter,three_quarter,train,
+head_005_frontal,frontal,train,
+head_006_three_quarter,three_quarter,train,
+head_007_three_quarter,three_quarter,train,
+head_008_three_quarter,three_quarter,train,
+head_009_three_quarter,three_quarter,holdout,
+head_010_frontal,frontal,train,
+head_011_three_quarter,three_quarter,train,
+head_012_three_quarter,three_quarter,train,
+head_013_three_quarter,three_quarter,holdout,
+head_014_three_quarter,three_quarter,train,
+head_015_frontal,frontal,train,
+head_016_three_quarter,three_quarter,holdout,
+head_017_three_quarter,three_quarter,train,
